@@ -1,0 +1,30 @@
+<script>
+    // Close modal if clicked outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('serverModal');
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    // Hero Slider Logic (Client Side interactions)
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+    
+    function goSlide(idx) {
+        if (slides.length === 0) return;
+        slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+        dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+        currentSlide = idx;
+    }
+
+    if(slides.length > 0) {
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % slides.length;
+            goSlide(currentSlide);
+        }, 6000);
+    }
+</script>
+</body>
+</html>

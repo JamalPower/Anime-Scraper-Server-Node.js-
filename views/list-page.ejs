@@ -1,0 +1,92 @@
+<%- include('partials/head.ejs') %>
+
+<main class="container">
+    <div class="list-header">
+        <h2 class="section-title" style="margin-bottom:0;"><%= title %></h2>
+        
+        <div class="dropdown-sever-selector">
+            <button id="drop-btn" class="dropbtn">
+                <%= 'سيرفر ' + servers[0].name %> <i class="fa fa-server"></i>
+            </button>
+            <div id="drop-content" class="dropdown-content">
+                <% servers.forEach(s => { %>
+                    <% const offsetMatch = s.url.match(/offset=(\w+)/); %>
+                    <% const off = offsetMatch ? offsetMatch[1] : '1'; %>
+                    <a href="<%= baseUrl %>?server=<%= off %>">سيرفر <%= s.name %></a>
+                <% }) %>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid">
+        <% if (data && data.length > 0) { %>
+            <% data.forEach(anime => { %>
+                <div class="card" onclick="window.location.href='/details?url=<%= encodeURIComponent(anime.url) %>&server=<%= currentServer %>'">
+                    <div class="card-poster">
+                        <% if (anime.image) { %>
+                            <img src="<%= anime.image %>" alt="<%= anime.title %>" loading="lazy" onerror="this.src='/placeholder.jpg'"/>
+                        <% } %>
+                        <div class="card-badges">
+                            <% if (anime.type) { %> <span class="badge"><%= anime.type %></span> <% } %>
+                            <% if (anime.quality) { %> <span class="badge badge-quality"><%= anime.quality %></span> <% } %>
+                        </div>
+                        <% if (anime.status) { %>
+                            <span class="card-status"><%= anime.status %></span>
+                        <% } %>
+                    </div>
+                    <div class="card-info">
+                        <div class="card-title"><%= anime.title || 'بدون عنوان' %></div>
+                        <div class="card-meta">
+                            <% if (anime.episode) { %><span>🎞 <%= anime.episode %></span><% } %>
+                            <% if (anime.year) { %><span>📅 <%= anime.year %></span><% } %>
+                            <% if (anime.genre) { %><span style="color:var(--muted);font-size:0.75rem"><%= anime.genre.split(',')[0] %></span><% } %>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <div class="empty" style="grid-column: 1/-1;">
+                <span class="empty-icon">📂</span>
+                <p>لا توجد بيانات متاحة حالياً لهذا التصنيف.</p>
+            </div>
+        <% } %>
+    </div>
+
+    <% if (next || data.length > 0) { %>
+        <div class="pagination">
+            <% 
+                // Simple logic to increment page number
+                const nextPage = parseInt(currentPage) + 1;
+            %>
+            <a href="<%= baseUrl %>?server=<%= currentServer %>&page=<%= nextPage %><%= typeof query !== 'undefined' ? '&query='+query : '' %>" class="pg-btn">
+               التالي
+            </a>
+        </div>
+    <% }else if(data.length === 0 && currentPage > 1) { %>
+        <div class="pagination">
+            <% 
+                // Simple logic to decrement page number
+                const prevPage = parseInt(currentPage) - 1;
+            %>
+            <a href="<%= baseUrl %>?server=<%= currentServer %>&page=<%= prevPage %><%= typeof query !== 'undefined' ? '&query='+query : '' %>" class="pg-btn">
+               السابق
+            </a>
+        </div>
+    <% } %>
+</main>
+<script>
+    const dropBtn = document.getElementById("drop-btn");
+    const dropContent = document.getElementById("drop-content");
+    dropBtn.addEventListener("click", () => {
+        dropContent.classList.toggle("show");
+    });
+    window.addEventListener("click", (event) => {
+        if (!event.target.matches(".dropbtn")) {
+            if (dropContent.classList.contains("show")) {
+                dropContent.classList.remove("show");
+            }
+        }
+    });
+</script>
+
+<%- include('partials/footer.ejs') %>

@@ -1,0 +1,123 @@
+<%- include('partials/head.ejs') %>
+
+<style>
+/* DETAILS PAGE STYLES */
+.details-hero {
+  display: flex; gap: 40px; margin-bottom: 40px;
+  background: var(--card); padding: 40px; border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+.details-poster {
+  flex-shrink: 0; width: 280px; border-radius: 10px; overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+.details-info { flex-grow: 1; }
+.details-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 15px; }
+.details-meta-item { margin-bottom: 8px; font-size: 0.95rem; }
+.details-meta-item strong { color: var(--accent); margin-left: 8px; }
+.details-story {
+  margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);
+  line-height: 1.8; color: var(--muted);
+}
+.episode-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; margin-bottom: 40px;
+}
+.episode-btn {
+  background: var(--surface); border: 1px solid var(--border); color: var(--text);
+  padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; text-align: center;
+}
+.episode-btn:hover, .episode-btn.active { border-color: var(--accent); color: var(--accent); }
+.episode-btn.active { background: rgba(124,92,252,0.1); }
+.player-container {
+  width: 100%; aspect-ratio: 16/9; background: #000; border-radius: var(--radius);
+  overflow: hidden; margin-top: 20px; border: 1px solid var(--border);
+}
+.player-container iframe { width: 100%; height: 100%; border: none; }
+.server-list { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
+.server-btn {
+  background: var(--surface); border: 1px solid var(--border); padding: 8px 16px;
+  border-radius: 5px; color: var(--text); cursor: pointer; transition: 0.2s;
+}
+.server-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+@media (max-width: 800px) {
+  .details-hero { flex-direction: column; padding: 20px; }
+  .details-poster { width: 100%; max-width: 300px; margin: 0 auto; }
+}
+</style>
+
+<main class="container" style="margin-top:40px;">
+    <% if (typeof details !== 'undefined' && details) { %>
+        <div class="details-hero">
+            <div class="details-poster">
+                <img src="<%= details.image %>" alt="Cover" />
+            </div>
+            <div class="details-info">
+                <h1 class="details-title"><%= details.title || 'بدون عنوان' %></h1>
+                
+                <% if(details.englishTitle) { %><div class="details-meta-item"><strong>الاسم الانجليزي:</strong> <%= details.englishTitle %></div><% } %>
+                <% if(details.status) { %><div class="details-meta-item"><strong>الحالة:</strong> <%= details.status %></div><% } %>
+                <% if(details.type) { %><div class="details-meta-item"><strong>النوع:</strong> <%= details.type %></div><% } %>
+                <% if(details.year) { %><div class="details-meta-item"><strong>سنة الإصدار:</strong> <%= details.year %></div><% } %>
+                <% if(details.genres && details.genres.length > 0) { %><div class="details-meta-item"><strong>التصنيف:</strong> <%= details.genres.join('، ') %></div><% } %>
+                <% if(details.quality) { %><div class="details-meta-item"><strong>الجودة:</strong> <%= details.quality %></div><% } %>
+                
+                <% if(details.story) { %>
+                    <div class="details-story"><%= details.story %></div>
+                <% } %>
+            </div>
+        </div>
+
+        <div class="episodes-section">
+            <div class="section-title"><%= episodes && episodes.length > 0 ? 'الحلقات' : 'المشاهدة' %></div>
+            <div class="episode-grid">
+                <% if (episodes && episodes.length > 0) { %>
+                    <% episodes.forEach(ep => { %>
+                        <a href="/details?url=<%= encodeURIComponent(url) %>&episodeUrl=<%= encodeURIComponent(ep.url) %>&server=<%= currentServer %>" 
+                           class="episode-btn <%= activeEpisodeUrl === ep.url ? 'active' : '' %>">
+                           <%= !ep.name.includes('الحلقة') ? 'الحلقة ' + ep.name : ep.name %>
+                        </a>
+                    <% }) %>
+                <% } else { %>
+                    <a href="/details?url=<%= encodeURIComponent(url) %>&episodeUrl=<%= encodeURIComponent(url) %>&server=<%= currentServer %>" 
+                       class="episode-btn <%= activeEpisodeUrl === url ? 'active' : '' %>">
+                       مشاهدة الفيلم / الحلقة
+                    </a>
+                <% } %>
+            </div>
+        </div>
+
+        <% if (episodeServers && episodeServers.length > 0) { %>
+            <div id="playerSection" style="margin-bottom: 60px;">
+                <div class="section-title">المشغل</div>
+                <div class="server-list">
+                    <% episodeServers.forEach((s, i) => { %>
+                        <button class="server-btn <%= i === 0 ? 'active' : '' %>" 
+                                onclick="setIframeSrc(this, '<%= s.url %>')">
+                                <%= s.name || 'سيرفر ' + (i+1) %>
+                        </button>
+                    <% }) %>
+                </div>
+                <div class="player-container">
+                    <iframe id="videoIframe" src="<%= episodeServers[0].url %>" allowfullscreen></iframe>
+                </div>
+            </div>
+            <script>
+                document.getElementById('playerSection').scrollIntoView({ behavior: 'smooth' });
+            </script>
+        <% } %>
+
+    <% } else { %>
+        <div class="empty"><p>حدث خطأ أثناء تحميل تفاصيل الأنمي.</p></div>
+    <% } %>
+</main>
+
+<script>
+    function setIframeSrc(btn, url) {
+        document.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('videoIframe').src = url;
+    }
+</script>
+
+<%- include('partials/footer.ejs') %>

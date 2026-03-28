@@ -1,0 +1,112 @@
+<%- include('partials/head.ejs') %>
+
+    <main class="container">
+        <% if (typeof error !=='undefined' && error) { %>
+            <div class="empty">
+                <p>
+                    <%= error %>
+                </p>
+            </div>
+            <% } else { %>
+                <!-- ─── HERO SLIDER ─── -->
+                <section class="hero" id="heroSlider">
+                    <% if (slider && slider.length> 0) { %>
+                        <% slider.forEach((s, idx)=> { %>
+                            <div class="slide <%= idx === 0 ? 'active' : '' %>">
+                                <div class="slide-bg" style="background-image:url('<%= s.image %>')"></div>
+                                <div class="slide-overlay"></div>
+                                <div class="slide-info">
+                                    <% if (s.type) { %> 
+                                        <span class="slide-badge"><%= s.type %></span>
+                                    <% } %>
+                                    <h1 class="slide-title"><%= s.title %></h1>
+                                    <div class="slide-ep">
+                                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M22 12H2M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+                                        <%= s.episode || 'بث مباشر' %>
+                                    </div>
+                                    <% if (s.description) { %>
+                                        <p style="margin-top:10px; color:rgba(255,255,255,0.6); line-height:1.5; max-height: 3em; overflow:hidden; max-width: 600px;">
+                                            <%= s.description %>
+                                        </p>
+                                    <% } %>
+                                    <button class="nav-btn" style="margin-top:20px; background:var(--accent); border:none; padding:8px 25px; font-size:0.8rem;" onclick="window.location.href='/details?url=<%= encodeURIComponent(s.url) %>&server=<%= currentServer %>'">شاهد الآن</button>
+                                </div>
+                            </div>
+                        <% }) %>
+                        <div class="slider-dots">
+                            <% slider.forEach((s, idx)=> { %>
+                                <div class="dot <%= idx === 0 ? 'active' : '' %>" onclick="goSlide(<%= idx %>)"></div>
+                            <% }) %>
+                        </div>
+                    <% } %>
+                </section>
+
+                <!-- ─── ROW DATA ─── -->
+                <% if (rowData && rowData.length> 0) { %>
+                    <% rowData.forEach((row, rIdx)=> { %>
+                        <div class="section-title">
+                            <%= row.title %>
+                        </div>
+                        <div class="grid">
+                            <% if (row.data && row.data.length> 0) { %>
+                                <% row.data.forEach(anime=> { %>
+                                    <div class="card"
+                                        onclick="window.location.href='/details?url=<%= encodeURIComponent(anime.url) %>&server=<%= currentServer %>'">
+                                        <div class="card-poster">
+                                            <% if (anime.image) { %>
+                                                <img src="<%= anime.image %>" alt="<%= anime.title %>" loading="lazy"
+                                                    onerror="this.style.display='none'" />
+                                                <% } %>
+                                                    <div class="card-badges">
+                                                        <% if (anime.type) { %> <span class="badge badge-type">
+                                                                <%= anime.type %>
+                                                            </span>
+                                                            <% } %>
+                                                                <% if (anime.quality) { %> <span
+                                                                        class="badge badge-quality">
+                                                                        <%= anime.quality %>
+                                                                    </span>
+                                                                    <% } %>
+                                                    </div>
+                                                    <% if (anime.status) { %>
+                                                        <span class="badge"
+                                                            style="position:absolute; bottom:8px; right:8px; background:rgba(0,0,0,0.7);">
+                                                            <%= anime.status %>
+                                                        </span>
+                                                        <% } %>
+                                        </div>
+                                        <div class="card-info">
+                                            <div class="card-title">
+                                                <%= anime.title || 'بدون عنوان' %>
+                                            </div>
+                                            <div class="card-meta">
+                                                <% if (anime.episode) { %><span>🎞 <%= anime.episode %></span>
+                                                    <% } %>
+                                                        <% if (anime.year || anime.releaseYear) { %><span>📅 <%=
+                                                                    anime.year || anime.releaseYear %></span>
+                                                            <% } %>
+                                                                <% if (anime.genre) { %><span
+                                                                        style="color:#a0a8cc;font-size:0.7rem">
+                                                                        <%= anime.genre.split(',')[0] %>
+                                                                    </span>
+                                                                    <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <% }) %>
+                                        <% } else { %>
+                                            <div class="empty" style="grid-column:1/-1">
+                                                <p>لا توجد بيانات.</p>
+                                            </div>
+                                            <% } %>
+                        </div>
+                        <% }) %>
+                            <% } else { %>
+                                <div class="empty">
+                                    <p>لا توجد بيانات متاحة في هذا السيرفر.</p>
+                                </div>
+                                <% } %>
+                                    <% } %>
+    </main>
+
+    <%- include('partials/footer.ejs') %>

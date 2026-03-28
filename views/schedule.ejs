@@ -1,0 +1,43 @@
+<%- include('partials/head.ejs') %>
+
+<main class="container">
+    <h2 class="section-title">جدول مواعيد الحلقات</h2>
+    
+    <% if (rowData && rowData.length > 0) { %>
+        <% rowData.forEach(row => { %>
+            <div class="section-title" style="margin-top:40px; font-size: 1.2rem; color: var(--accent);">
+                <%= row.title %>
+            </div>
+            
+            <div class="grid">
+                <% row.data.forEach(anime => { %>
+                    <div class="card" onclick="window.location.href='/details?url=<%= encodeURIComponent(anime.url) %>&server=<%= currentServer %>'">
+                        <div class="card-poster">
+                            <% if (anime.image) { %>
+                                <img src="<%= anime.image %>" alt="<%= anime.title %>" loading="lazy" />
+                            <% } %>
+                            <div class="card-badges">
+                                <% if (anime.type) { %> <span class="badge"><%= anime.type %></span> <% } %>
+                                <% if (anime.quality) { %> <span class="badge badge-quality"><%= anime.quality %></span> <% } %>
+                            </div>
+                        </div>
+                        <div class="card-info">
+                            <div class="card-title"><%= anime.title %></div>
+                            <div class="card-meta">
+                                <% if (anime.episode) { %><span>🎞 <%= anime.episode %></span><% } %>
+                                <% if (anime.year) { %><span>📅 <%= anime.year %></span><% } %>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        <% }) %>
+    <% } else { %>
+        <div class="empty">
+            <span class="empty-icon">⏰</span>
+            <p>لا يوجد جدول متاح حالياً.</p>
+        </div>
+    <% } %>
+</main>
+
+<%- include('partials/footer.ejs') %>
