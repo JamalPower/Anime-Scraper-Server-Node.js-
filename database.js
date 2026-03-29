@@ -1,24 +1,12 @@
 require('dotenv').config();
 const knex = require("knex");
 
+// Build connection string from environment variables
+const connectionString = `mysql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?ssl=true`;
+
 const db = knex({
     client: "mysql2",
-    connection: {
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME,
-        port: parseInt(process.env.DB_PORT),
-        supportBigNumbers: true,
-        bigNumberStrings: true,
-        waitForConnections: true,
-        connectionLimit: 10,
-        queueLimit: 0
-    },
-    pool: {
-        min: 0,
-        max: 5
-    }
+    connection: connectionString
 });
 
 module.exports = db;
