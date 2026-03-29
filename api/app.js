@@ -285,7 +285,7 @@ app.get("/about", (req, res) => {
 app.get("/test", async (req, res) => {
     const url = encodeURIComponent(req.query.url);
     if (!url) return res.send('url is not provided');
-    await fetch(`https://api.scraperapi.com/?api_key=970aafa3e2ddef045e491bf40d12e96d&url=${url}`)
+    await fetch(`https://api.scraperapi.com/?api_key=${process.env.SCRAPER_API_KEY}&url=${url}`)
     .then((response) => response.text())
     .then((data) => {
         res.send(data);
