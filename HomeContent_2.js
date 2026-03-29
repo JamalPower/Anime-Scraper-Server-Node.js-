@@ -12,6 +12,7 @@ class HomeContent_2 {
             const response = await axiosInstance.get(url);
             const data = response.data;
             const animeList = [];
+            const seen = new Set(); // Track seen URLs to avoid duplicates
             const $ = cheerio.load(data);
             const items = $('.listupd .bs, a.tip').length > 0 ? $('.listupd .bs, a.tip') : $('.bs, .a-i');
             items.each((i, el) => {
@@ -23,7 +24,10 @@ class HomeContent_2 {
                     status: $el.find(".epx, .status").text().trim(),
                     type: $el.find(".typez, .type").text().trim(),
                 };
-                if (anime.title && anime.url) animeList.push(anime);
+                if (anime.title && anime.url && !seen.has(anime.url)) {
+                    seen.add(anime.url);
+                    animeList.push(anime);
+                }
             });
             const next = $('.hpage a').attr('href');
             const result = {
@@ -41,6 +45,7 @@ class HomeContent_2 {
             const response = await axiosInstance.get(`${this.baseUrl}anime/?page=${page}&type=movie&order=update`);
             const data = response.data;
             const animeList = [];
+            const seen = new Set(); // Track seen URLs to avoid duplicates
             const $ = cheerio.load(data);
             const items = $('.listupd .bs, a.tip').length > 0 ? $('.listupd .bs, a.tip') : $('.bs, .a-i');
             items.each((i, el) => {
@@ -52,7 +57,10 @@ class HomeContent_2 {
                     status: $el.find(".epx, .status").text().trim(),
                     type: $el.find(".typez, .type").text().trim(),
                 };
-                if (anime.title && anime.url) animeList.push(anime);
+                if (anime.title && anime.url && !seen.has(anime.url)) {
+                    seen.add(anime.url);
+                    animeList.push(anime);
+                }
             });
             const next = $('.hpage a.r').attr('href') || $('.hpage a').length > 0;
             return { animeList, next };
@@ -63,6 +71,7 @@ class HomeContent_2 {
             const response = await axiosInstance.get(`${this.baseUrl}anime/?page=${page}&status=ongoing&order=update`);
             const data = response.data;
             const animeList = [];
+            const seen = new Set(); // Track seen URLs to avoid duplicates
             const $ = cheerio.load(data);
             const items = $('.listupd .bs, a.tip').length > 0 ? $('.listupd .bs, a.tip') : $('.bs, .a-i');
             items.each((i, el) => {
@@ -74,7 +83,10 @@ class HomeContent_2 {
                     status: $el.find(".epx, .status").text().trim(),
                     type: $el.find(".typez, .type").text().trim(),
                 };
-                if (anime.title && anime.url) animeList.push(anime);
+                if (anime.title && anime.url && !seen.has(anime.url)) {
+                    seen.add(anime.url);
+                    animeList.push(anime);
+                }
             });
             const next = $('.hpage a.r').attr('href') || $('.hpage a').length > 0;
             return { animeList, next };
@@ -86,6 +98,7 @@ class HomeContent_2 {
             const response = await axiosInstance.get(`${this.baseUrl}anime/?page=${page}&order=update`);
             const data = response.data;
             const animeList = [];
+            const seen = new Set(); // Track seen URLs to avoid duplicates
             const $ = cheerio.load(data);
             const items = $('.listupd .bs, a.tip').length > 0 ? $('.listupd .bs, a.tip') : $('.bs, .a-i');
             items.each((i, el) => {
@@ -97,7 +110,10 @@ class HomeContent_2 {
                     status: $el.find(".epx, .status").text().trim(),
                     type: $el.find(".typez, .type").text().trim(),
                 };
-                if (anime.title && anime.url) animeList.push(anime);
+                if (anime.title && anime.url && !seen.has(anime.url)) {
+                    seen.add(anime.url);
+                    animeList.push(anime);
+                }
             });
             const next = $('.hpage a.r').attr('href') || $('.hpage a').length > 0;
             return { animeList, next };
@@ -108,6 +124,7 @@ class HomeContent_2 {
             const response = await axiosInstance.get(`${this.baseUrl}anime/?status=completed&sub=&order=rating`);
             const data = response.data;
             const animeList = [];
+            const seen = new Set(); // Track seen URLs to avoid duplicates
             const $ = cheerio.load(data);
             const items = $('.listupd .bs, a.tip').length > 0 ? $('.listupd .bs, a.tip') : $('.bs, .a-i');
             items.each((i, el) => {
@@ -119,7 +136,10 @@ class HomeContent_2 {
                     status: $el.find(".epx, .status").text().trim(),
                     type: $el.find(".typez, .type").text().trim(),
                 };
-                if (anime.title && anime.url) animeList.push(anime);
+                if (anime.title && anime.url && !seen.has(anime.url)) {
+                    seen.add(anime.url);
+                    animeList.push(anime);
+                }
             });
             const next = $('.hpage a').attr('href');
             const result = {
@@ -136,6 +156,7 @@ class HomeContent_2 {
             const response = await axiosInstance.get(`${this.baseUrl}/?s=${query}`);
             const data = response.data;
             const animeList = [];
+            const seen = new Set(); // Track seen URLs to avoid duplicates
             const $ = cheerio.load(data);
             const items = $('.listupd .bs, a.tip').length > 0 ? $('.listupd .bs, a.tip') : $('.bs, .a-i');
             items.each((i, el) => {
@@ -147,7 +168,10 @@ class HomeContent_2 {
                     status: $el.find(".epx, .status").text().trim(),
                     type: $el.find(".typez, .type").text().trim(),
                 };
-                if (anime.title && anime.url) animeList.push(anime);
+                if (anime.title && anime.url && !seen.has(anime.url)) {
+                    seen.add(anime.url);
+                    animeList.push(anime);
+                }
             });
             const next = $('.hpage a').attr('href');
             const result = {
