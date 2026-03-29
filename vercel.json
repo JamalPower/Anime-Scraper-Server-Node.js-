@@ -11,5 +11,18 @@
       "src": "/(.*)",
       "dest": "api/app.js"
     }
-  ]
+  ],
+  "functions": {
+    "api/app.js": {
+      "maxDuration": 60,
+      "includeFiles": [
+        "views/**",
+        "DataStandardizer.js",
+        "HomeContent_1.js",
+        "HomeContent_2.js",
+        "HomeContent_3.js",
+        "scraperAxios.js"
+      ]
+    }
+  }
 }

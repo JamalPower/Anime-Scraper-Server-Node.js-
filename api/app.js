@@ -21,6 +21,7 @@ const server_list =
     }
 ]
 const app = express();
+app.set("trust proxy", 1);
 app.use(cors());
 app.use(express.json());
 
@@ -264,7 +265,17 @@ app.get("/about", (req, res) => {
         servers: server_list 
     });
 });
-
+app.get("/test", async (req, res) => {
+    const url = encodeURIComponent(req.query.url);
+    if (!url) return res.send('url is not provided');
+    await fetch(`https://api.scraperapi.com/?api_key=970aafa3e2ddef045e491bf40d12e96d&url=${url}`)
+    .then((response) => response.text())
+    .then((data) => {
+        res.send(data);
+    }).catch((err) =>{
+        res.status(500).send(err.message)
+    });
+});
 //------------------------------------------------------
 // For Vercel serverless deployment
 module.exports = app;
