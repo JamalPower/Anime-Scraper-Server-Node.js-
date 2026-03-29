@@ -3,7 +3,7 @@ const axios = require("axios");
 const timeout = Number(process.env.SCRAPER_TIMEOUT_MS) || (process.env.VERCEL ? 20000 : 15000);
 
 /** Fallback for local / quick tests only. Prefer `SCRAPERAPI_KEY` on Vercel; rotate this key if it was ever committed or shared. */
-const SCRAPERAPI_KEY_FALLBACK = "970aafa3e2ddef045e491bf40d12e96d";
+const SCRAPERAPI_KEY_FALLBACK = process.env.SCRAPER_API_KEY;
 
 const scraperApiKey = process.env.SCRAPERAPI_KEY || SCRAPERAPI_KEY_FALLBACK;
 const proxyUrl = process.env.SCRAPER_PROXY || process.env.HTTPS_PROXY || process.env.HTTP_PROXY;

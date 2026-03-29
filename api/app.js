@@ -1,12 +1,13 @@
 const express = require("express");
 const cors = require("cors");
 const fetch = require("node-fetch");
+require('dotenv').config()
 const knex = require("knex")({
     client: "mysql2",
     connection: {
         host: "mysql-1829b7f-jamal-project.a.aivencloud.com",
         user: "avnadmin",
-        password: "AVNS_rgIRYrtQnRJSnYfeaAf",
+        password: process.env.DB_PASSWORD,
         database: "defaultdb",
         port: 26763,
         ssl: {
