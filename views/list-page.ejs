@@ -12,7 +12,7 @@
                 const selectedIdx = Math.max(0, parseInt(selectedServer, 10) - 1);
                 const selectedServerName = (servers[selectedIdx] && servers[selectedIdx].name) || 'RA';
                 %>
-                <%= 'سيرفر ' + selectedServerName %> <i class="fa fa-server"></i>
+                <%= 'سيرفر ' + selectedServerName %> <i class="fa-solid fa-circle-nodes"></i>
             </button>
             <div id="drop-content" class="dropdown-content">
                 <% servers.forEach(s => { %>

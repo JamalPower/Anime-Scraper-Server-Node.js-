@@ -57,7 +57,7 @@
       gap: 5px;
       width: 42px;
       height: 42px;
-      border-radius: 50%;
+      border-radius: 10%;
       border: 1px solid var(--border);
       background: var(--surface);
       color: var(--text);
@@ -192,7 +192,7 @@
       display: none;
       width: 42px;
       height: 42px;
-      border-radius: 50%;
+      border-radius: 10%;
       border: 1px solid var(--border);
       background: var(--surface);
       color: var(--text);
@@ -319,37 +319,59 @@
     .section-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 25px; display: flex; align-items: center; gap: 12px; }
     .section-title::before { content: ''; display: block; width: 5px; height: 25px; border-radius: 5px; background: linear-gradient(to bottom, var(--accent), var(--accent2)); }
 
-    .list-header { 
-        display: flex; align-items: center; justify-content: space-between;
-        margin-top: 20px; 
-        margin-bottom: 30px; background: var(--card); padding: 15px 25px; 
-        border-radius: var(--radius); border: 1px solid var(--border);
+    .list-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        margin-top: 20px;
+        margin-bottom: 30px;
+        padding: 14px 18px;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        background: linear-gradient(135deg, rgba(28,31,50,0.92), rgba(22,24,39,0.9));
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+    }
+    .list-header .section-title {
+        margin-bottom: 0;
+        font-size: clamp(1.05rem, 1.8vw, 1.35rem);
     }
     .dropdown-sever-selector{
         position: relative;
         display: inline-block;
         width: max-content;
     }
-    .dropdown-sever-selector i{
-        margin-left: 4px;
-        margin-right: 4px;
-        width: 5px;
-        height: 5px;
-    }
-    .dropbtn{
-        padding: 8px 20px; border-radius: 50px; background: var(--surface); 
-        border: 1px solid var(--border); font-weight: 700; font-size: 0.85rem; 
-        transition: 0.2s; cursor: pointer;
+    .dropbtn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        font-weight: 700;
+        font-size: 0.78rem;
+        line-height: 1;
+        transition: all var(--transition);
+        cursor: pointer;
         color: var(--text);
         font-family: inherit;
-        scale: 1.2;
+        white-space: nowrap;
+    }
+    .dropbtn:hover {
+        border-color: var(--accent);
+        background: rgba(124, 92, 252, 0.12);
+    }
+    .dropbtn i {
+        font-size: 0.76rem;
+        color: var(--muted);
     }
     .dropdown-content {
       display: none; 
       position: absolute;
       top: 100%; right: 0;
       background-color: var(--card);
-      min-width: 250px;
+      min-width: 170px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
       z-index: 1000;
       border-radius: 12px;
@@ -360,12 +382,12 @@
 
    .dropdown-content a {
      color: var(--text);
-     padding: 12px 16px;
+     padding: 10px 12px;
      margin: 5px;
      border-radius: 12px;
      text-decoration: none;
      display: block;
-     font-size: 18px;
+     font-size: 0.92rem;
      font-weight: 700;
     }
     .dropdown-content a:hover {
@@ -824,6 +846,17 @@
       const mobileMenu = document.getElementById('mobileMenu');
       const mobileSearchBtn = document.getElementById('mobileSearchBtn');
       const mobileSearchPanel = document.getElementById('mobileSearchPanel');
+      const mobileTitleMaxChars = 36;
+
+      // Trim slider titles on mobile only.
+      if (window.matchMedia('(max-width: 768px)').matches) {
+        document.querySelectorAll('.slide-title').forEach((titleEl) => {
+          const fullText = (titleEl.textContent || '').trim();
+          if (fullText.length > mobileTitleMaxChars) {
+            titleEl.textContent = `${fullText.slice(0, mobileTitleMaxChars)}...`;
+          }
+        });
+      }
       
       if (hamburger && mobileMenu) {
         // Toggle menu on hamburger click
