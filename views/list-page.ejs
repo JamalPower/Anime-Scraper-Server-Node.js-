@@ -6,12 +6,13 @@
         
         <div class="dropdown-sever-selector">
             <button id="drop-btn" class="dropbtn">
-                <% 
-                const urlParams = new URLSearchParams(window.location.search);
-                const serverParam = urlParams.get('server');
-                const currentServer = serverParam || '1';
+                <%
+                // This template is rendered on the server, so use route params, not window.
+                const selectedServer = String(currentServer || '1');
+                const selectedIdx = Math.max(0, parseInt(selectedServer, 10) - 1);
+                const selectedServerName = (servers[selectedIdx] && servers[selectedIdx].name) || 'RA';
                 %>
-                <%= 'سيرفر ' + servers[parseInt(currentServer) - 1].name %> <i class="fa fa-server"></i>
+                <%= 'سيرفر ' + selectedServerName %> <i class="fa fa-server"></i>
             </button>
             <div id="drop-content" class="dropdown-content">
                 <% servers.forEach(s => { %>
