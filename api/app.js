@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 require('dotenv').config()
+const db = require("../database");
 const DataStandardizer = require("../DataStandardizer");
 const PORT = 3000;
 const ejs = require("ejs");
@@ -281,11 +282,19 @@ app.get("/test", async (req, res) => {
 });
 app.get("/db-test", async (req, res) => {
     try {
-        const result = await knex.select("*").from("test_table");
-        res.json(result);
+        const result = await db.select("*").from("test_table").limit(10);
+        res.json({
+            success: true,
+            message: "Database connected successfully!",
+            data: result
+        });
     } catch (error) {
         console.error(error);
-        res.status(500).send("Error occurred while fetching data from the database.");
+        res.status(500).json({
+            success: false,
+            message: "Error occurred while connecting to database.",
+            error: error.message
+        });
     }
 });
 
