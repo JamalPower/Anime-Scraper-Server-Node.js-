@@ -12,7 +12,8 @@
                 const selectedIdx = Math.max(0, parseInt(selectedServer, 10) - 1);
                 const selectedServerName = (servers[selectedIdx] && servers[selectedIdx].name) || 'RA';
                 %>
-                <%= 'سيرفر ' + selectedServerName %> <i class="fa-solid fa-circle-nodes"></i>
+                <span class="dropbtn-label"><%= 'سيرفر ' + selectedServerName %></span>
+                <i class="fa-solid fa-circle-nodes"></i>
             </button>
             <div id="drop-content" class="dropdown-content">
                 <% servers.forEach(s => { %>
@@ -83,11 +84,12 @@
 <script>
     const dropBtn = document.getElementById("drop-btn");
     const dropContent = document.getElementById("drop-content");
-    dropBtn.addEventListener("click", () => {
+    dropBtn.addEventListener("click", (event) => {
+        event.stopPropagation();
         dropContent.classList.toggle("show");
     });
     window.addEventListener("click", (event) => {
-        if (!event.target.matches(".dropbtn")) {
+        if (!event.target.closest(".dropbtn") && !event.target.closest("#drop-content")) {
             if (dropContent.classList.contains("show")) {
                 dropContent.classList.remove("show");
             }
