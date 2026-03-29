@@ -5,7 +5,7 @@
         <h2 class="section-title" style="margin-bottom:0;"><%= title %></h2>
         
         <div class="dropdown-sever-selector">
-            <button id="drop-btn" class="dropbtn">
+            <button id="drop-btn" class="dropbtn" type="button" aria-label="اختيار السيرفر">
                 <%
                 // This template is rendered on the server, so use route params, not window.
                 const selectedServer = String(currentServer || '1');
@@ -84,17 +84,23 @@
 <script>
     const dropBtn = document.getElementById("drop-btn");
     const dropContent = document.getElementById("drop-content");
-    dropBtn.addEventListener("click", (event) => {
-        event.stopPropagation();
-        dropContent.classList.toggle("show");
-    });
-    window.addEventListener("click", (event) => {
-        if (!event.target.closest(".dropbtn") && !event.target.closest("#drop-content")) {
-            if (dropContent.classList.contains("show")) {
+
+    if (dropBtn && dropContent) {
+        const toggleDropdown = (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            dropContent.classList.toggle("show");
+        };
+
+        dropBtn.addEventListener("click", toggleDropdown);
+        dropBtn.addEventListener("touchstart", toggleDropdown, { passive: false });
+
+        window.addEventListener("click", (event) => {
+            if (!event.target.closest(".dropbtn") && !event.target.closest("#drop-content")) {
                 dropContent.classList.remove("show");
             }
-        }
-    });
+        });
+    }
 </script>
 
 <%- include('partials/footer.ejs') %>
