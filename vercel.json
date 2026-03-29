@@ -5,7 +5,7 @@
       "src": "api/app.js",
       "use": "@vercel/node",
       "config": {
-        "includeFiles": "{views/**,DataStandardizer.js,HomeContent_*.js}"
+        "includeFiles": "views/**,*.js"
       }
     }
   ],
