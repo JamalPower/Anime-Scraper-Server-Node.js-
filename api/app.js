@@ -1,5 +1,19 @@
 const express = require("express");
 const cors = require("cors");
+const fetch = require("node-fetch");
+const knex = require("knex")({
+    client: "mysql2",
+    connection: {
+        host: "mysql-1829b7f-jamal-project.a.aivencloud.com",
+        user: "avnadmin",
+        password: "AVNS_rgIRYrtQnRJSnYfeaAf",
+        database: "defaultdb",
+        port: 26763,
+        ssl: {
+            rejectUnauthorized: false
+        }
+    }
+});
 const DataStandardizer = require("../DataStandardizer");
 const PORT = 3000;
 const ejs = require("ejs");
@@ -118,7 +132,7 @@ app.get("/api/anime/episode-date", async (req, res)=>{
 // ==========================================
 app.get("/", async (req, res) => {
     const offset = req.query.server || '1';
-    const visitorIp = req.ip || req.connection.remoteAddress || req.headers['x-forwarded-for'] || 'Unknown IP';
+    const visitorIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     console.log(`Visitor IP: ${visitorIp} - Accessed Home Page with server offset: ${offset}`);
     const standardizer = new DataStandardizer();
     try {
@@ -278,6 +292,20 @@ app.get("/test", async (req, res) => {
         res.status(500).send(err.message)
     });
 });
+app.get("/db-test", async (req, res) => {
+    try {
+        const result = await knex.select("*").from("test_table");
+        res.json(result);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Error occurred while fetching data from the database.");
+    }
+});
+
+
+//======================anime-cache========================
+
+//==========================================================
 //------------------------------------------------------
 // For Vercel serverless deployment
 module.exports = app;
