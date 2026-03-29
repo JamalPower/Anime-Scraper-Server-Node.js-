@@ -5,14 +5,7 @@
       "src": "api/app.js",
       "use": "@vercel/node",
       "config": {
-        "includeFiles": [
-          "views/**",
-          "DataStandardizer.js",
-          "HomeContent_1.js",
-          "HomeContent_2.js",
-          "HomeContent_3.js",
-          "scraperAxios.js"
-        ]
+        "includeFiles": "{views/**,DataStandardizer.js,HomeContent_*.js}"
       }
     }
   ],
