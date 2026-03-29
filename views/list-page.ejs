@@ -6,7 +6,12 @@
         
         <div class="dropdown-sever-selector">
             <button id="drop-btn" class="dropbtn">
-                <%= 'سيرفر ' + servers[0].name %> <i class="fa fa-server"></i>
+                <% 
+                const urlParams = new URLSearchParams(window.location.search);
+                const serverParam = urlParams.get('server');
+                const currentServer = serverParam || '1';
+                %>
+                <%= 'سيرفر ' + servers[parseInt(currentServer) - 1].name %> <i class="fa fa-server"></i>
             </button>
             <div id="drop-content" class="dropdown-content">
                 <% servers.forEach(s => { %>

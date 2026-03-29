@@ -118,6 +118,8 @@ app.get("/api/anime/episode-date", async (req, res)=>{
 // ==========================================
 app.get("/", async (req, res) => {
     const offset = req.query.server || '1';
+    const visitorIp = req.ip || req.connection.remoteAddress || req.headers['x-forwarded-for'] || 'Unknown IP';
+    console.log(`Visitor IP: ${visitorIp} - Accessed Home Page with server offset: ${offset}`);
     const standardizer = new DataStandardizer();
     try {
         const homeData = await standardizer.getLatestData(offset);
