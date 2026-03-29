@@ -1,9 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 require('dotenv').config()
-// Database connection disabled due to mysql2/Aiven SSL compatibility issues
-// To re-enable: uncomment the line below
-// const db = require("../database");
+const pool = require("../database");
 const DataStandardizer = require("../DataStandardizer");
 const PORT = 3000;
 const ejs = require("ejs");
@@ -282,25 +280,25 @@ app.get("/test", async (req, res) => {
         res.status(500).send(err.message)
     });
 });
-// Database route disabled due to mysql2/Aiven SSL compatibility issues
-// app.get("/db-test", async (req, res) => {
-//     try {
-//         const result = await db.select("*").from("test_table").limit(10);
-//         res.json({
-//             success: true,
-//             message: "Database connected successfully!",
-//             data: result
-//         });
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({
-//             success: false,
-//             message: "Error occurred while connecting to database.",
-//             error: error.message
-//         });
-//     }
-// });
 
+// Database test route
+app.get("/db-test", async (req, res) => {
+    try {
+        const result = await pool.query('SELECT NOW() as current_time');
+        res.json({
+            success: true,
+            message: "✅ Connected to Supabase PostgreSQL successfully!",
+            data: result.rows[0]
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "❌ Error connecting to database",
+            error: error.message
+        });
+    }
+});
 
 //======================anime-cache========================
 

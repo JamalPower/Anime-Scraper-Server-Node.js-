@@ -1,12 +1,16 @@
 require('dotenv').config();
-const knex = require("knex");
+const { Pool } = require('pg');
 
-// Build connection string from environment variables
-const connectionString = `mysql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?ssl=true`;
-
-const db = knex({
-    client: "mysql2",
-    connection: connectionString
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false
+    }
 });
 
-module.exports = db;
+// Test connection on startup
+pool.on('error', (err) => {
+    console.error('Unexpected error on idle client', err);
+});
+
+module.exports = pool;
