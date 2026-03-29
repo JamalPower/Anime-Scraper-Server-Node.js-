@@ -9,9 +9,15 @@ const db = knex({
         password: process.env.DB_PASSWORD,
         database: process.env.DB_NAME,
         port: parseInt(process.env.DB_PORT),
-        ssl: {
-            rejectUnauthorized: false
-        }
+        supportBigNumbers: true,
+        bigNumberStrings: true,
+        waitForConnections: true,
+        connectionLimit: 10,
+        queueLimit: 0
+    },
+    pool: {
+        min: 0,
+        max: 5
     }
 });
 
