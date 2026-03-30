@@ -455,6 +455,12 @@ app.get("/clear-db", async (req, res) => {
   
   res.send({ message: "Cache successfully cleared! Go visit the home page again." });
 });
+app.get("/db-test", async (req, res) => {
+    const server_name = `server_${req.query.server || '1'}`;
+    await animeCachTable(server_name);
+    const CacheRow = await db(server_name).where({}).first();
+    res.send(CacheRow);
+})
 
 
 //======================anime-cache========================
