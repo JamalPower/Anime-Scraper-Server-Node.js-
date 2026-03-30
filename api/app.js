@@ -151,12 +151,13 @@ app.get("/", async (req, res) => {
                 servers: server_list 
             });
         } else {
-            // Cache exists — parse it and check if expired
-            const data = typeof HomeCache.home_page === 'string' ? JSON.parse(HomeCache.home_page) : HomeCache.home_page;
-            const cachedTime = new Date(data.time).getTime();
+            // Cache exists — parse it and check if expired (or if it was cleared and is null)
+            const homePageStr = HomeCache.home_page;
+            const data = homePageStr ? (typeof homePageStr === 'string' ? JSON.parse(homePageStr) : homePageStr) : null;
+            const cachedTime = data ? new Date(data.time).getTime() : 0;
 
-            if ((timeNow - cachedTime) >= 1000 * 60 * 60 * 12) {
-                // Cache expired — scrape and update
+            if (!data || (timeNow - cachedTime) >= 1000 * 60 * 60 * 12) {
+                // Cache expired or was cleared (`null`) — scrape and update
                 const homeData = await standardizer.getLatestData(offset);
                 
                 // Only update cache if we actually found real data
