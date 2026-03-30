@@ -1,29 +1,11 @@
 const express = require("express");
 const cors = require("cors");
-const knex = require("knex");
 require('dotenv').config()
-// Database connection disabled due to mysql2/Aiven SSL compatibility issues
-// To re-enable: uncomment the line below
-// const db = require("../database");
 const DataStandardizer = require("../DataStandardizer");
 const PORT = 3000;
 const ejs = require("ejs");
 const path = require("path");
 const localhost = "http://localhost:" + PORT;
-const db = knex({
-    client: "mysql2",
-    connection: {
-        host: process.env.DB_HOST,
-        port: parseInt(process.env.DB_PORT),
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME,
-        ssl: {
-            rejectUnauthorized: false,
-        },
-    },
-    pool: { min: 0, max: 5 },
-});
 
 const server_list = 
 [
@@ -300,14 +282,27 @@ app.get("/test", async (req, res) => {
 });
 app.get("/test-db", async (req, res) => {
     try {
+        // Lazy load database only when testing
+        const db = require("../database");
+        
+        // Test the connection
         const result = await db.raw("SELECT 1 + 1 AS result");
+        
+        await db.destroy(); // Close connection after test
+        
         res.json({
-                success: true,
-                message: "Database connection successful",
-                data: result
+            success: true,
+            message: "Aiven database connection successful",
+            data: result[0]
         });
     } catch (err) {
-        res.status(500).send(err.message);
+        console.error("Database connection error:", err.message);
+        res.status(500).json({
+            success: false,
+            message: "Database connection failed",
+            error: err.message,
+            hint: "Check your .env file has DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME set correctly"
+        });
     }
 });
 
