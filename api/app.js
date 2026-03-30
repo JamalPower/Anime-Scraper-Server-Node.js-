@@ -132,17 +132,21 @@ app.get("/", async (req, res) => {
 
         if (!HomeCache) {
             const homeData = await standardizer.getLatestData(offset);
-            await db(server_name).insert({
-                home_page: JSON.stringify({
-                    slider: homeData.slider,
-                    rowData: homeData.rowData,
-                    currentServer: offset,
-                    time: timeNow
-                })
-            });
+            
+            // Only save to cache if we actually found real data
+            if (homeData && homeData.slider && homeData.slider.length > 0) {
+                await db(server_name).insert({
+                    home_page: JSON.stringify({
+                        slider: homeData.slider,
+                        rowData: homeData.rowData,
+                        currentServer: offset,
+                        time: timeNow
+                    })
+                });
+            }
             res.render("index", { 
-                slider: homeData.slider, 
-                rowData: homeData.rowData, 
+                slider: homeData.slider || [], 
+                rowData: homeData.rowData || [], 
                 currentServer: offset, 
                 servers: server_list 
             });
@@ -154,17 +158,21 @@ app.get("/", async (req, res) => {
             if ((timeNow - cachedTime) >= 1000 * 60 * 60 * 12) {
                 // Cache expired — scrape and update
                 const homeData = await standardizer.getLatestData(offset);
-                await db(server_name).update({
-                    home_page: JSON.stringify({
-                        slider: homeData.slider,
-                        rowData: homeData.rowData,
-                        currentServer: offset,
-                        time: timeNow
-                    })
-                });
+                
+                // Only update cache if we actually found real data
+                if (homeData && homeData.slider && homeData.slider.length > 0) {
+                    await db(server_name).update({
+                        home_page: JSON.stringify({
+                            slider: homeData.slider,
+                            rowData: homeData.rowData,
+                            currentServer: offset,
+                            time: timeNow
+                        })
+                    });
+                }
                 res.render("index", { 
-                    slider: homeData.slider, 
-                    rowData: homeData.rowData, 
+                    slider: homeData.slider || [], 
+                    rowData: homeData.rowData || [], 
                     currentServer: offset, 
                     servers: server_list 
                 });
@@ -229,18 +237,19 @@ app.get("/anime-list", async (req, res) => {
             // First time ever: row doesn't exist, scrape and insert row
             const result = await standardizer.getAnimeList(srv, page);
             
-            // Create the initial dictionary for anime_list
-            const initialListCache = {
-                [cacheKey]: { data: result, time: timeNow }
-            };
-            
-            await db(server_name).insert({
-                anime_list: JSON.stringify(initialListCache)
-            });
+            // Only save if data is valid
+            if (result && result.data && result.data.length > 0) {
+                const initialListCache = {
+                    [cacheKey]: { data: result, time: timeNow }
+                };
+                await db(server_name).insert({
+                    anime_list: JSON.stringify(initialListCache)
+                });
+            }
 
             res.render("list-page", { 
                 title: "قائمة الانمي", 
-                data: result.data, 
+                data: result.data || [], 
                 next: result.next, 
                 currentServer: srv, 
                 currentPage: page, 
@@ -261,15 +270,16 @@ app.get("/anime-list", async (req, res) => {
                 const result = await standardizer.getAnimeList(srv, page);
                 
                 // Add or update the specific page in the dictionary
-                parsedListObj[cacheKey] = { data: result, time: timeNow };
-                
-                await db(server_name).update({
-                    anime_list: JSON.stringify(parsedListObj)
-                });
+                if (result && result.data && result.data.length > 0) {
+                    parsedListObj[cacheKey] = { data: result, time: timeNow };
+                    await db(server_name).update({
+                        anime_list: JSON.stringify(parsedListObj)
+                    });
+                }
                 
                 res.render("list-page", { 
                     title: "قائمة الانمي", 
-                    data: result.data, 
+                    data: result.data || [], 
                     next: result.next, 
                     currentServer: srv, 
                     currentPage: page, 
@@ -432,11 +442,17 @@ app.get("/test", async (req, res) => {
         res.status(500).send(err.message)
     });
 });
-app.get("/test-db", async (req, res) => {
+app.get("/clear-db", async (req, res) => {
   const server_name = `server_${req.query.server || '1'}`;
   await animeCachTable(server_name);
-  const CacheRow = await db(server_name).where({}).first();
-  res.send(CacheRow);
+  
+  await db(server_name).update({ 
+      home_page: null, 
+      anime_list: null, 
+      schedule: null 
+  });
+  
+  res.send({ message: "Cache successfully cleared! Go visit the home page again." });
 });
 
 
