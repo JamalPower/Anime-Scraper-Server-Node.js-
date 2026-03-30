@@ -10,10 +10,9 @@ const db = knex({
         user: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
         database: process.env.DB_NAME,
-        ssl: "amazon", // Aiven uses Amazon SSL certificates
-        waitForConnections: true,
-        connectionLimit: 5,
-        queueLimit: 0,
+        ssl: {
+            rejectUnauthorized: false,
+        },
     },
     pool: { min: 0, max: 5 },
     acquireConnectionTimeout: 10000,
