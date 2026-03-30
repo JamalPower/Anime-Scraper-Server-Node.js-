@@ -1,7 +1,5 @@
 const knex = require("knex");
 require('dotenv').config();
-
-// Create database connection with proper configuration for Aiven
 const db = knex({
     client: "mysql2",
     connection: {

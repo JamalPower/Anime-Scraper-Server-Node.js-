@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 require('dotenv').config()
 const DataStandardizer = require("../DataStandardizer");
+const db = require("../database");
 const PORT = 3000;
 const ejs = require("ejs");
 const path = require("path");
@@ -124,13 +125,59 @@ app.get("/", async (req, res) => {
     console.log(`Visitor IP: ${visitorIp} - Accessed Home Page with server offset: ${offset}`);
     const standardizer = new DataStandardizer();
     try {
-        const homeData = await standardizer.getLatestData(offset);
-        res.render("index", { 
-            slider: homeData.slider, 
-            rowData: homeData.rowData, 
-            currentServer: offset, 
-            servers: server_list 
-        });
+        const server_name = `server_${offset}`;
+        await animeCachTable(server_name);
+        const HomeCache = await db(server_name).where({}).first();
+        const timeNow = Date.now();
+
+        if (!HomeCache) {
+            const homeData = await standardizer.getLatestData(offset);
+            await db(server_name).insert({
+                home_page: JSON.stringify({
+                    slider: homeData.slider,
+                    rowData: homeData.rowData,
+                    currentServer: offset,
+                    time: timeNow
+                })
+            });
+            res.render("index", { 
+                slider: homeData.slider, 
+                rowData: homeData.rowData, 
+                currentServer: offset, 
+                servers: server_list 
+            });
+        } else {
+            // Cache exists — parse it and check if expired
+            const data = typeof HomeCache.home_page === 'string' ? JSON.parse(HomeCache.home_page) : HomeCache.home_page;
+            const cachedTime = new Date(data.time).getTime();
+
+            if ((timeNow - cachedTime) >= 1000 * 60 * 60 * 12) {
+                // Cache expired — scrape and update
+                const homeData = await standardizer.getLatestData(offset);
+                await db(server_name).update({
+                    home_page: JSON.stringify({
+                        slider: homeData.slider,
+                        rowData: homeData.rowData,
+                        currentServer: offset,
+                        time: timeNow
+                    })
+                });
+                res.render("index", { 
+                    slider: homeData.slider, 
+                    rowData: homeData.rowData, 
+                    currentServer: offset, 
+                    servers: server_list 
+                });
+            } else {
+                // Cache is fresh — serve from database
+                res.render("index", { 
+                    slider: data.slider, 
+                    rowData: data.rowData, 
+                    currentServer: offset, 
+                    servers: server_list 
+                });
+            }
+        }
     } catch (e) {
         res.render("index", { slider: [], rowData: [], currentServer: offset, servers: server_list, error: "Failed to load Data: " + e.message });
     }
@@ -172,16 +219,77 @@ app.get("/anime-list", async (req, res) => {
     const page = req.query.page || '1';
     const standardizer = new DataStandardizer();
     try {
-        const result = await standardizer.getAnimeList(srv, page);
-        res.render("list-page", { 
-            title: "قائمة الانمي", 
-            data: result.data, 
-            next: result.next, 
-            currentServer: srv, 
-            currentPage: page, 
-            servers: server_list,
-            baseUrl: "/anime-list"
-        });
+        const server_name = `server_${srv}`;
+        await animeCachTable(server_name);
+        const CacheRow = await db(server_name).where({}).first();
+        const timeNow = Date.now();
+        const cacheKey = `page_${page}`;
+
+        if (!CacheRow) {
+            // First time ever: row doesn't exist, scrape and insert row
+            const result = await standardizer.getAnimeList(srv, page);
+            
+            // Create the initial dictionary for anime_list
+            const initialListCache = {
+                [cacheKey]: { data: result, time: timeNow }
+            };
+            
+            await db(server_name).insert({
+                anime_list: JSON.stringify(initialListCache)
+            });
+
+            res.render("list-page", { 
+                title: "قائمة الانمي", 
+                data: result.data, 
+                next: result.next, 
+                currentServer: srv, 
+                currentPage: page, 
+                servers: server_list,
+                baseUrl: "/anime-list"
+            });
+        } else {
+            // Row exists, get the existing dictionary (or empty object if null)
+            const listStr = CacheRow.anime_list;
+            const parsedListObj = listStr ? (typeof listStr === 'string' ? JSON.parse(listStr) : listStr) : {};
+            
+            // Look for this specific page inside the dictionary
+            const pageCache = parsedListObj[cacheKey];
+            const cachedTime = pageCache ? new Date(pageCache.time).getTime() : 0;
+
+            if (!pageCache || (timeNow - cachedTime) >= 1000 * 60 * 60 * 12) {
+                // Page is not cached yet OR expired -> scrape and update
+                const result = await standardizer.getAnimeList(srv, page);
+                
+                // Add or update the specific page in the dictionary
+                parsedListObj[cacheKey] = { data: result, time: timeNow };
+                
+                await db(server_name).update({
+                    anime_list: JSON.stringify(parsedListObj)
+                });
+                
+                res.render("list-page", { 
+                    title: "قائمة الانمي", 
+                    data: result.data, 
+                    next: result.next, 
+                    currentServer: srv, 
+                    currentPage: page, 
+                    servers: server_list,
+                    baseUrl: "/anime-list"
+                });
+            } else {
+                // Cached and fresh -> serve from DB
+                const result = pageCache.data;
+                res.render("list-page", { 
+                    title: "قائمة الانمي", 
+                    data: result.data, 
+                    next: result.next, 
+                    currentServer: srv, 
+                    currentPage: page, 
+                    servers: server_list,
+                    baseUrl: "/anime-list"
+                });
+            }
+        }
     } catch (e) { 
         console.log(e.message)
         res.redirect("/"); 
@@ -231,13 +339,57 @@ app.get("/schedule", async (req, res) => {
     const srv = req.query.server || '1';
     const standardizer = new DataStandardizer();
     try {
-        const schedule = await standardizer.getEpisodeByDate();
-        res.render("schedule", { 
-            title: "جدول الحلقات", 
-            rowData: schedule.rowData, 
-            currentServer: srv, 
-            servers: server_list 
-        });
+        const server_name = `server_${srv}`;
+        await animeCachTable(server_name);
+        const CacheRow = await db(server_name).where({}).first();
+        const timeNow = Date.now();
+
+        if (!CacheRow) {
+            // First time ever: row doesn't exist, scrape and insert row
+            const scheduleData = await standardizer.getEpisodeByDate();
+            await db(server_name).insert({
+                schedule: JSON.stringify({
+                    data: scheduleData,
+                    time: timeNow
+                })
+            });
+            res.render("schedule", { 
+                title: "جدول الحلقات", 
+                rowData: scheduleData.rowData, 
+                currentServer: srv, 
+                servers: server_list 
+            });
+        } else {
+            // Row exists, check if schedule is already cached
+            const scheduleStr = CacheRow.schedule;
+            const parsedSchedule = scheduleStr ? (typeof scheduleStr === 'string' ? JSON.parse(scheduleStr) : scheduleStr) : null;
+            const cachedTime = parsedSchedule ? new Date(parsedSchedule.time).getTime() : 0;
+
+            if (!parsedSchedule || (timeNow - cachedTime) >= 1000 * 60 * 60 * 12) {
+                // Not cached yet OR expired -> scrape and update
+                const scheduleData = await standardizer.getEpisodeByDate();
+                await db(server_name).update({
+                    schedule: JSON.stringify({
+                        data: scheduleData,
+                        time: timeNow
+                    })
+                });
+                res.render("schedule", { 
+                    title: "جدول الحلقات", 
+                    rowData: scheduleData.rowData, 
+                    currentServer: srv, 
+                    servers: server_list 
+                });
+            } else {
+                // Cached and fresh -> serve from DB
+                res.render("schedule", { 
+                    title: "جدول الحلقات", 
+                    rowData: parsedSchedule.data.rowData, 
+                    currentServer: srv, 
+                    servers: server_list 
+                });
+            }
+        }
     } catch (e) { res.redirect("/"); }
 });
 
@@ -281,34 +433,33 @@ app.get("/test", async (req, res) => {
     });
 });
 app.get("/test-db", async (req, res) => {
-    try {
-        // Lazy load database only when testing
-        const db = require("../database");
-        
-        // Test the connection
-        const result = await db.raw("SELECT 1 + 1 AS result");
-        
-        await db.destroy(); 
-        
-        res.json({
-            success: true,
-            message: "Aiven database connection successful",
-            data: result[0]
-        });
-    } catch (err) {
-        console.error("Database connection error:", err.message);
-        res.status(500).json({
-            success: false,
-            message: "Database connection failed",
-            error: err.message,
-            hint: "Check your .env file has DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME set correctly"
-        });
-    }
+  const server_name = `server_${req.query.server || '1'}`;
+  await animeCachTable(server_name);
+  const CacheRow = await db(server_name).where({}).first();
+  res.send(CacheRow);
 });
 
 
 //======================anime-cache========================
-
+async function animeCachTable(server_name){
+    const exists = await db.schema.hasTable(server_name);
+    if (!exists) {
+        await db.schema.createTable(server_name, (table) => {
+            table.increments("id").primary();
+            table.json("home_page");
+            table.json("anime_details");
+            table.json("anime_episodes");
+            table.json("anime_servers");
+            table.json("anime_list");
+            table.json("movie_list");
+            table.json("season_anime");
+            table.json("schedule");
+            table.json("search");
+            table.timestamp("time");
+            table.timestamps(true, true);
+        });
+    }
+}
 //==========================================================
 //------------------------------------------------------
 // For Vercel serverless deployment
