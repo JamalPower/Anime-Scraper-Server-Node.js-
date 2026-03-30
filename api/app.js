@@ -288,7 +288,7 @@ app.get("/test-db", async (req, res) => {
         // Test the connection
         const result = await db.raw("SELECT 1 + 1 AS result");
         
-        await db.destroy(); // Close connection after test
+        await db.destroy(); 
         
         res.json({
             success: true,
