@@ -28,6 +28,17 @@ app.set("trust proxy", 1);
 app.use(cors());
 app.use(express.json());
 
+// Security Headers Middleware
+app.use((req, res, next) => {
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+    res.setHeader('Content-Security-Policy', "default-src 'self' https: data: 'unsafe-inline' 'unsafe-eval'; frame-src 'self' https:;");
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+    next();
+});
+
 // Set up EJS and Static Files
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "../views"));
