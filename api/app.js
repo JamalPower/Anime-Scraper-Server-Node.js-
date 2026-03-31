@@ -216,9 +216,52 @@ app.get("/details", async (req, res) => {
     const offset = req.query.server || '1';
     const standardizer = new DataStandardizer();
     try {
-        const details = await standardizer.getAnimeDetails(url);
-        const eps = await standardizer.getAnimeEpisodes(url).catch(() => []);
+        const server_name = `server_${offset}`;
+        await animeCachTable(server_name);
+        const CacheRow = await db(server_name).where({}).first();
+        const timeNow = Date.now();
         
+        // We use encodeURIComponent so special characters in the URL don't break the JSON structure!
+        const cacheKey = `url_${encodeURIComponent(url)}`;
+        
+        let details = null;
+        let eps = [];
+        
+        let detailsStr = CacheRow ? CacheRow.anime_details : null;
+        let parsedDetailsObj = detailsStr ? (typeof detailsStr === 'string' ? JSON.parse(detailsStr) : detailsStr) : {};
+        let urlCache = parsedDetailsObj[cacheKey];
+        let cachedTime = urlCache ? new Date(urlCache.time).getTime() : 0;
+        
+        if (!urlCache || (timeNow - cachedTime) >= 1000 * 60 * 60 * 24) {
+            // Scrape fresh data
+            details = await standardizer.getAnimeDetails(url);
+            eps = await standardizer.getAnimeEpisodes(url).catch(() => []);
+            
+            // Only update cache if we actually found valid anime details!
+            if (details) {
+                parsedDetailsObj[cacheKey] = {
+                    data: { details, eps },
+                    time: timeNow
+                };
+                
+                if (!CacheRow) {
+                    await db(server_name).insert({
+                        anime_details: JSON.stringify(parsedDetailsObj)
+                    });
+                } else {
+                    await db(server_name).update({
+                        anime_details: JSON.stringify(parsedDetailsObj)
+                    });
+                }
+            }
+        } else {
+            // Cache is fresh — serve from database!
+            details = urlCache.data.details;
+            eps = urlCache.data.eps;
+        }
+        
+        // We fetch the streaming servers LIVE every time. 
+        // We DO NOT cache video server links because streaming tokens often expire within a few hours!
         let servers = null;
         if (epUrl) {
             servers = await standardizer.getAnimeServers(epUrl).catch(() => []);
@@ -328,16 +371,78 @@ app.get("/movie-list", async (req, res) => {
     const page = req.query.page || '1';
     const standardizer = new DataStandardizer();
     try {
-        const result = await standardizer.getMovieList(srv, page);
-        res.render("list-page", { 
-            title: "قائمة الافلام", 
-            data: result.data, 
-            next: result.next, 
-            currentServer: srv, 
-            currentPage: page, 
-            servers: server_list,
-            baseUrl: "/movie-list"
-        });
+        const server_name = `server_${srv}`;
+        await animeCachTable(server_name);
+        const CacheRow = await db(server_name).where({}).first();
+        const timeNow = Date.now();
+        const cacheKey = `page_${page}`;
+
+        if (!CacheRow) {
+            // Row doesn't exist at all, scrape and insert row
+            const result = await standardizer.getMovieList(srv, page);
+            
+            // Only save to cache if data is valid
+            if (result && result.data && result.data.length > 0) {
+                const initialListCache = {
+                    [cacheKey]: { data: result, time: timeNow }
+                };
+                await db(server_name).insert({
+                    movie_list: JSON.stringify(initialListCache)
+                });
+            }
+
+            res.render("list-page", { 
+                title: "قائمة الافلام", 
+                data: result.data || [], 
+                next: result.next, 
+                currentServer: srv, 
+                currentPage: page, 
+                servers: server_list,
+                baseUrl: "/movie-list"
+            });
+        } else {
+            // Row exists, retrieve the existing `movie_list` dictionary
+            const listStr = CacheRow.movie_list;
+            const parsedListObj = listStr ? (typeof listStr === 'string' ? JSON.parse(listStr) : listStr) : {};
+            
+            const pageCache = parsedListObj[cacheKey];
+            const cachedTime = pageCache ? new Date(pageCache.time).getTime() : 0;
+
+            if (!pageCache || (timeNow - cachedTime) >= 1000 * 60 * 60 * 24) {
+                // Not cached yet OR expired -> scrape and update
+                const result = await standardizer.getMovieList(srv, page);
+                
+                // Add or update the specific page in the dictionary if valid
+                if (result && result.data && result.data.length > 0) {
+                    parsedListObj[cacheKey] = { data: result, time: timeNow };
+                    await db(server_name).update({
+                        movie_list: JSON.stringify(parsedListObj)
+                    });
+                }
+                
+                res.render("list-page", { 
+                    title: "قائمة الافلام", 
+                    data: result.data || [], 
+                    next: result.next, 
+                    currentServer: srv, 
+                    currentPage: page, 
+                    servers: server_list,
+                    baseUrl: "/movie-list"
+                });
+            } else {
+                // Cached and fresh -> serve from DB
+                const result = pageCache.data;
+                res.render("list-page", { 
+                    title: "قائمة الافلام", 
+                    data: result.data || [], 
+                    next: result.next, 
+                    currentServer: srv, 
+                    currentPage: page, 
+                    servers: server_list,
+                    baseUrl: "/movie-list"
+                });
+            }
+        }
     } catch (e) {
      console.log(e.message)
      res.redirect("/"); 
@@ -349,17 +454,82 @@ app.get("/season-anime", async (req, res) => {
     const page = req.query.page || '1';
     const standardizer = new DataStandardizer();
     try {
-        const result = await standardizer.getSeasonAnime(srv, page);
-        res.render("list-page", { 
-            title: "انميات الموسم", 
-            data: result.data, 
-            next: result.next, 
-            currentServer: srv, 
-            currentPage: page, 
-            servers: server_list,
-            baseUrl: "/season-anime"
-        });
-    } catch (e) { res.redirect("/"); }
+        const server_name = `server_${srv}`;
+        await animeCachTable(server_name);
+        const CacheRow = await db(server_name).where({}).first();
+        const timeNow = Date.now();
+        const cacheKey = `page_${page}`;
+
+        if (!CacheRow) {
+            // Row doesn't exist at all, scrape and insert row
+            const result = await standardizer.getSeasonAnime(srv, page);
+            
+            // Only save to cache if data is valid
+            if (result && result.data && result.data.length > 0) {
+                const initialListCache = {
+                    [cacheKey]: { data: result, time: timeNow }
+                };
+                await db(server_name).insert({
+                    season_anime: JSON.stringify(initialListCache)
+                });
+            }
+
+            res.render("list-page", { 
+                title: "انميات الموسم", 
+                data: result.data || [], 
+                next: result.next, 
+                currentServer: srv, 
+                currentPage: page, 
+                servers: server_list,
+                baseUrl: "/season-anime"
+            });
+        } else {
+            // Row exists, retrieve the existing dictionary
+            const listStr = CacheRow.season_anime;
+            const parsedListObj = listStr ? (typeof listStr === 'string' ? JSON.parse(listStr) : listStr) : {};
+            
+            const pageCache = parsedListObj[cacheKey];
+            const cachedTime = pageCache ? new Date(pageCache.time).getTime() : 0;
+
+            if (!pageCache || (timeNow - cachedTime) >= 1000 * 60 * 60 * 24) {
+                // Not cached yet OR expired -> scrape and update
+                const result = await standardizer.getSeasonAnime(srv, page);
+                
+                // Add or update the specific page in the dictionary if valid
+                if (result && result.data && result.data.length > 0) {
+                    parsedListObj[cacheKey] = { data: result, time: timeNow };
+                    await db(server_name).update({
+                        season_anime: JSON.stringify(parsedListObj)
+                    });
+                }
+                
+                res.render("list-page", { 
+                    title: "انميات الموسم", 
+                    data: result.data || [], 
+                    next: result.next, 
+                    currentServer: srv, 
+                    currentPage: page, 
+                    servers: server_list,
+                    baseUrl: "/season-anime"
+                });
+            } else {
+                // Cached and fresh -> serve from DB
+                const result = pageCache.data;
+                res.render("list-page", { 
+                    title: "انميات الموسم", 
+                    data: result.data || [], 
+                    next: result.next, 
+                    currentServer: srv, 
+                    currentPage: page, 
+                    servers: server_list,
+                    baseUrl: "/season-anime"
+                });
+            }
+        }
+    } catch (e) { 
+        console.log(e.message)
+        res.redirect("/"); 
+    }
 });
 
 app.get("/schedule", async (req, res) => {

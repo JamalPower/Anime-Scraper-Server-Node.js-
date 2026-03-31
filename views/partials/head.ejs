@@ -453,13 +453,15 @@
         background-repeat: no-repeat;
         background-attachment: fixed;
     }
-    .dev-badge {
+    .dev-badge::after {
+      content: "@Jamal_nexo";
         background: var(--accent); color: #fff; padding: 4px 16px; 
         font-family: 'Outfit', sans-serif;
         border-radius: 50px; font-weight: 700; font-size: 0.8rem; margin-bottom: 20px; display: inline-block;
         transition: 0.3s;
     }
-    .dev-badge:hover {
+    .dev-badge:hover::after {
+        content: "المطور";
         transform: scale(1.05);
         cursor: pointer;
         
