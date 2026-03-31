@@ -122,22 +122,25 @@ app.get("/api/anime/episode-date", async (req, res)=>{
 app.get("/", async (req, res) => {
     const offset = req.query.server || '1';
     const visitorIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    const visitorIpList = await db("visitor_ips").where({}).first();
-    if (!visitorIpList) {
-        await db("visitor_ips").insert({
-            visitor_ip: JSON.stringify([visitorIp])
-        });
-    } else {
-        const visitorIps = typeof visitorIpList.visitor_ip === 'string' ? JSON.parse(visitorIpList.visitor_ip) : visitorIpList.visitor_ip;
-        if (!visitorIps.includes(visitorIp)) {
-            visitorIps.push(visitorIp);
-            await db("visitor_ips").update({
-                visitor_ip: JSON.stringify(visitorIps)
-            });
-        }
-    }
     const standardizer = new DataStandardizer();
     try {
+        await initVisitorIpsTable();
+        const visitorIpList = await db("visitor_ips").where({}).first();
+        if (!visitorIpList) {
+            await db("visitor_ips").insert({
+                visitor_ip: JSON.stringify([visitorIp])
+            });
+        } else {
+            const visitorIps = typeof visitorIpList.visitor_ip === 'string' ? JSON.parse(visitorIpList.visitor_ip) : visitorIpList.visitor_ip;
+            if (!visitorIps.includes(visitorIp)) {
+                visitorIps.push(visitorIp);
+                await db("visitor_ips").update({
+                    visitor_ip: JSON.stringify(visitorIps)
+                });
+            }
+        }
+        // ---------------------------
+
         const server_name = `server_${offset}`;
         await animeCachTable(server_name);
         const HomeCache = await db(server_name).where({}).first();
@@ -474,13 +477,28 @@ app.get("/db-test", async (req, res) => {
     const CacheRow = await db(server_name).where({}).first();
     res.send(CacheRow);
 })
-app.get("/visitor-ip", async (req, res) => {
-    const visitorIpList = await db("visitor_ips").where({}).first();
-    res.send(visitorIpList);
+app.get("/api/visitor-ip", async (req, res) => {
+    try {
+        await initVisitorIpsTable();
+        const visitorIpList = await db("visitor_ips").where({}).first();
+        res.send(visitorIpList);
+    } catch(e) {
+        res.status(500).send({ error: e.message });
+    }
 })
 
 
 //======================anime-cache========================
+async function initVisitorIpsTable() {
+    const exists = await db.schema.hasTable("visitor_ips");
+    if (!exists) {
+        await db.schema.createTable("visitor_ips", (table) => {
+            table.increments("id").primary();
+            table.json("visitor_ip");
+        });
+    }
+}
+
 async function animeCachTable(server_name){
     const exists = await db.schema.hasTable(server_name);
     if (!exists) {
