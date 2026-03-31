@@ -507,16 +507,60 @@
     .card-title { font-size: 0.95rem; font-weight: 700; line-height: 1.4; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .card-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; color: var(--muted); }
     .card-meta span { display: flex; align-items: center; gap: 4px; }
-    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 60px; }
-    .info-box { background: var(--card); border: 1px solid var(--border); padding: 30px; border-radius: 18px; }
-    .info-box h2 { color: var(--accent); margin-bottom: 15px; font-size: 1.3rem; }
-    .info-box ul { list-style: none; }
-    .info-box li { margin-bottom: 10px; display: flex; align-items: center; gap: 10px; font-size: 0.95rem; }
+    /* ──────────────────── NEW ABOUT US SECTIONS ──────────────────── */
+    .vision-section {
+        background: linear-gradient(145deg, var(--card), rgba(124, 92, 252, 0.05));
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 50px 30px;
+        text-align: center;
+        margin-bottom: 50px;
+        position: relative;
+        overflow: hidden;
+    }
+    .vision-section::before {
+        content: '';
+        position: absolute;
+        top: -50%; left: -50%; width: 200%; height: 200%;
+        background: radial-gradient(circle, rgba(124, 92, 252, 0.1) 0%, transparent 60%);
+        z-index: 0;
+        pointer-events: none;
+    }
+    .vision-content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+    .vision-icon {
+        width: 70px; height: 70px; margin: 0 auto 20px;
+        background: rgba(124, 92, 252, 0.1); border: 1px solid var(--accent);
+        border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        font-size: 1.8rem; color: var(--accent);
+    }
+    .vision-content h2 { color: #fff; font-size: 2rem; font-weight: 800; margin-bottom: 15px; }
+    .vision-content p { color: var(--text); font-size: 1.1rem; line-height: 1.8; opacity: 0.9; }
+
+    .features-section { margin-bottom: 60px; }
+    .section-header-center { text-align: center; margin-bottom: 40px; }
+    .section-header-center h2 { font-size: 2rem; font-weight: 800; color: #fff; margin-bottom: 10px; }
+    .section-header-center p { color: var(--muted); font-size: 1.05rem; }
+
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+    .feature-card {
+        background: var(--card); border: 1px solid var(--border); padding: 30px 25px; border-radius: 20px;
+        transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        text-align: center;
+    }
+    .feature-card:hover { transform: translateY(-8px); border-color: var(--accent); box-shadow: 0 10px 30px rgba(124, 92, 252, 0.15); }
+    .feature-icon {
+        width: 60px; height: 60px; margin: 0 auto 20px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        border-radius: 16px; display: flex; align-items: center; justify-content: center;
+        font-size: 1.5rem; color: #fff; transform: rotate(-5deg); transition: transform 0.3s ease;
+    }
+    .feature-card:hover .feature-icon { transform: rotate(0deg) scale(1.1); }
+    .feature-card h3 { font-size: 1.25rem; font-weight: 800; color: #fff; margin-bottom: 12px; }
+    .feature-card p { font-size: 0.95rem; color: var(--muted); line-height: 1.6; }
     
     @media (max-width: 992px) {
       .nav-links { display: none; }
       .search-bar { width: 200px; }
-      .about-grid { grid-template-columns: 1fr; }
     }
     
     /* ──────────────────── MOBILE RESPONSIVE ──────────────────── */
@@ -688,21 +732,30 @@
         height: 150px;
       }
       
-      .about-grid {
+      .vision-section {
+        padding: 30px 20px;
+        margin-bottom: 30px;
+      }
+
+      .vision-content h2 {
+        font-size: 1.5rem;
+      }
+      
+      .vision-content p {
+        font-size: 1rem;
+      }
+      
+      .features-grid {
         grid-template-columns: 1fr;
         gap: 15px;
       }
       
-      .info-box {
+      .feature-card {
         padding: 20px;
       }
       
-      .info-box h2 {
-        font-size: 1.1rem;
-      }
-      
-      .info-box li {
-        font-size: 0.9rem;
+      .section-header-center h2 {
+        font-size: 1.5rem;
       }
       
       .social-links {

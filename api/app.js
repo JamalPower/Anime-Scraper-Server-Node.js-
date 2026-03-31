@@ -204,7 +204,7 @@ app.get("/", async (req, res) => {
             }
         }
     } catch (e) {
-        res.render("index", { slider: [], rowData: [], currentServer: offset, servers: server_list, error: "Failed to load Data: " + e.message });
+        res.render("index", { slider: [], rowData: [], currentServer: offset, servers: server_list, error: "Failed to load Data ,check terminal" + e.message });
     }
 });
 
@@ -317,7 +317,7 @@ app.get("/anime-list", async (req, res) => {
                 baseUrl: "/anime-list"
             });
         } else {
-            // Row exists, get the existing dictionary (or empty object if null)
+           
             const listStr = CacheRow.anime_list;
             const parsedListObj = listStr ? (typeof listStr === 'string' ? JSON.parse(listStr) : listStr) : {};
             
