@@ -75,17 +75,17 @@
     <section class="stats-section">
         <div class="stat-box">
             <i class="fa-solid fa-clapperboard stat-icon"></i>
-            <h3 class="counter" data-target="10000">0</h3>
-            <p>حلقات أنمي</p>
+            <h3 class="counter" data-target="+10000">0</h3>
+            <p>أعمال أنمي</p>
         </div>
         <div class="stat-box">
             <i class="fa-solid fa-film stat-icon"></i>
-            <h3 class="counter" data-target="500">0</h3>
+            <h3 class="counter" data-target="+500">0</h3>
             <p>فيلم حصري</p>
         </div>
         <div class="stat-box">
             <i class="fa-solid fa-server stat-icon"></i>
-            <h3 class="counter" data-target="15">0</h3>
+            <h3 class="counter" data-target="+3">0</h3>
             <p>سيرفر مشاهدة</p>
         </div>
         <div class="stat-box">
@@ -95,79 +95,12 @@
         </div>
     </section>
 
-    <!-- FAQ Section -->
-    <section class="faq-section">
-        <div class="section-header-center">
-            <h2>الأسئلة الشائعة</h2>
-            <p>إجابات لأهم الأسئلة التي قد تدور في ذهنك</p>
-        </div>
-        <div class="faq-container">
-            <div class="faq-item">
-                <button class="faq-question">
-                    هل سيظل موقع AnimeNexo مجانياً؟
-                    <i class="fa-solid fa-chevron-down"></i>
-                </button>
-                <div class="faq-answer">
-                    <p>بالتأكيد! التزامنا هو تقديم أفضل تجربة مشاهدة للأنمي مجاناً بالكامل ولن نقوم بفرض أي رسوم على المستخدمين.</p>
-                </div>
-            </div>
-            <div class="faq-item">
-                <button class="faq-question">
-                    متى يتم إضافة حلقات الأنميات المستمرة؟
-                    <i class="fa-solid fa-chevron-down"></i>
-                </button>
-                <div class="faq-answer">
-                    <p>نقوم بتحديث الحلقات فور صدورها وترجمتها، لضمان أن تكون دائماً على اطلاع بآخر التطورات في الأنميات التي تتابعها.</p>
-                </div>
-            </div>
-            <div class="faq-item">
-                <button class="faq-question">
-                    ماذا أفعل إذا كان السيرفر لا يعمل؟
-                    <i class="fa-solid fa-chevron-down"></i>
-                </button>
-                <div class="faq-answer">
-                    <p>نحن نوفر مصادر وسيرفرات متعددة لكل حلقة. إذا واجهت مشكلة في سيرفر معين، ما عليك سوى التبديل إلى سيرفر آخر من القائمة وسيتم حل المشكلة.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta-section">
-        <div class="cta-content">
-            <h2>مستعد لبدء رحلتك في عالم الأنمي؟</h2>
-            <p>انضم الآن واستمتع بأضخم مكتبة أنمي بأفضل جودة وسيرفرات سريعة.</p>
-            <a href="/" class="cta-btn">تصفح أحدث الحلقات <i class="fa-solid fa-arrow-left"></i></a>
-        </div>
-    </section>
-
     <div style="text-align:center; padding-bottom: 40px; opacity: 0.6; font-size: 0.9rem;">
         <p>© 2026 جميع الحقوق محفوظة لـ <strong>Jamal Nexo</strong></p>
     </div>
 </main>
 
 <script>
-    // Accordion functionality
-    document.querySelectorAll('.faq-question').forEach(button => {
-        button.addEventListener('click', () => {
-            const faqItem = button.parentElement;
-            const isActive = faqItem.classList.contains('active');
-            
-            // Close all FAQs
-            document.querySelectorAll('.faq-item').forEach(item => {
-                item.classList.remove('active');
-                item.querySelector('.faq-answer').style.maxHeight = null;
-            });
-            
-            // Open clicked FAQ if it wasn't active
-            if (!isActive) {
-                faqItem.classList.add('active');
-                const answer = button.nextElementSibling;
-                answer.style.maxHeight = answer.scrollHeight + "px";
-            }
-        });
-    });
-
     // Counters animation with Intersection Observer
     const counters = document.querySelectorAll('.counter');
     const speed = 200; 
@@ -175,15 +108,17 @@
     const animateCounters = () => {
         counters.forEach(counter => {
             const updateCount = () => {
-                const target = +counter.getAttribute('data-target');
-                const count = +counter.innerText;
+                const rawTarget = counter.getAttribute('data-target');
+                const hasPlus = rawTarget.startsWith('+');
+                const target = +(rawTarget.replace('+', ''));
+                const count = +(counter.innerText.replace('+', ''));
                 const inc = target / speed;
                 
                 if (count < target) {
-                    counter.innerText = Math.ceil(count + inc);
+                    counter.innerText = (hasPlus ? "+" : "") + Math.ceil(count + inc);
                     setTimeout(updateCount, 15);
                 } else {
-                    counter.innerText = target;
+                    counter.innerText = rawTarget;
                 }
             };
             updateCount();
