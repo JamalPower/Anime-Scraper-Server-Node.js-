@@ -122,7 +122,20 @@ app.get("/api/anime/episode-date", async (req, res)=>{
 app.get("/", async (req, res) => {
     const offset = req.query.server || '1';
     const visitorIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    console.log(`Visitor IP: ${visitorIp} - Accessed Home Page with server offset: ${offset}`);
+    const visitorIpList = await db("visitor_ips").where({}).first();
+    if (!visitorIpList) {
+        await db("visitor_ips").insert({
+            visitor_ip: JSON.stringify([visitorIp])
+        });
+    } else {
+        const visitorIps = typeof visitorIpList.visitor_ip === 'string' ? JSON.parse(visitorIpList.visitor_ip) : visitorIpList.visitor_ip;
+        if (!visitorIps.includes(visitorIp)) {
+            visitorIps.push(visitorIp);
+            await db("visitor_ips").update({
+                visitor_ip: JSON.stringify(visitorIps)
+            });
+        }
+    }
     const standardizer = new DataStandardizer();
     try {
         const server_name = `server_${offset}`;
@@ -156,7 +169,7 @@ app.get("/", async (req, res) => {
             const data = homePageStr ? (typeof homePageStr === 'string' ? JSON.parse(homePageStr) : homePageStr) : null;
             const cachedTime = data ? new Date(data.time).getTime() : 0;
 
-            if (!data || (timeNow - cachedTime) >= 1000 * 60 * 60 * 12) {
+            if (!data || (timeNow - cachedTime) >= 1000 * 60 * 60 * 24) {
                 // Cache expired or was cleared (`null`) — scrape and update
                 const homeData = await standardizer.getLatestData(offset);
                 
@@ -266,7 +279,7 @@ app.get("/anime-list", async (req, res) => {
             const pageCache = parsedListObj[cacheKey];
             const cachedTime = pageCache ? new Date(pageCache.time).getTime() : 0;
 
-            if (!pageCache || (timeNow - cachedTime) >= 1000 * 60 * 60 * 12) {
+            if (!pageCache || (timeNow - cachedTime) >= 1000 * 60 * 60 * 24) {
                 // Page is not cached yet OR expired -> scrape and update
                 const result = await standardizer.getAnimeList(srv, page);
                 
@@ -376,7 +389,7 @@ app.get("/schedule", async (req, res) => {
             const parsedSchedule = scheduleStr ? (typeof scheduleStr === 'string' ? JSON.parse(scheduleStr) : scheduleStr) : null;
             const cachedTime = parsedSchedule ? new Date(parsedSchedule.time).getTime() : 0;
 
-            if (!parsedSchedule || (timeNow - cachedTime) >= 1000 * 60 * 60 * 12) {
+            if (!parsedSchedule || (timeNow - cachedTime) >= 1000 * 60 * 60 * 24) {
                 // Not cached yet OR expired -> scrape and update
                 const scheduleData = await standardizer.getEpisodeByDate();
                 await db(server_name).update({
@@ -460,6 +473,10 @@ app.get("/db-test", async (req, res) => {
     await animeCachTable(server_name);
     const CacheRow = await db(server_name).where({}).first();
     res.send(CacheRow);
+})
+app.get("/visitor-ip", async (req, res) => {
+    const visitorIpList = await db("visitor_ips").where({}).first();
+    res.send(visitorIpList);
 })
 
 
