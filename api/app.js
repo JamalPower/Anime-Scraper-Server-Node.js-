@@ -25,9 +25,48 @@ const server_list =
 ]
 const app = express();
 app.set("trust proxy", 1);
+const rateLimit = require("express-rate-limit");
 app.use(cors());
 app.use(express.json());
 
+// Anti-Scraping: Rate Limiting
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, 
+    max: 200, 
+    message: { error: "Too many requests from this IP, please try again after 15 minutes." },
+    standardHeaders: true, 
+    legacyHeaders: false, 
+});
+app.use(limiter);
+
+// Anti-Scraping: Advanced API Protection
+app.use('/api', (req, res, next) => {
+    // 1. Secret Key Bypass for Jetpack Compose App & Testing
+    const secretKey = req.headers['x-nexo-api-key'];
+    if (secretKey === process.env.API_SECRET_KEY) {
+        return next();
+    }
+
+    // 2. Block obvious scrappers by User-Agent
+    const userAgent = req.headers['user-agent'] || '';
+    const blockedUserAgents = ['curl', 'python', 'postman', 'wget', 'urllib', 'headless', 'puppeteer', 'httpclient'];
+    const isBot = blockedUserAgents.some(bot => userAgent.toLowerCase().includes(bot));
+    
+    if (!userAgent || isBot) {
+        return res.status(403).json({ error: "Access Denied: Unrecognized or explicitly blocked User-Agent." });
+    }
+
+    // 3. Strict Web Origin Restriction
+    const origin = req.headers.origin || req.headers.referer || '';
+    const allowedOrigins = ['https://anime-nexo.vercel.app', 'http://localhost:3000', 'http://127.0.0.1:3000'];
+    const isAllowedOrigin = allowedOrigins.some(o => origin.startsWith(o));
+
+    if (!isAllowedOrigin) {
+        return res.status(403).json({ error: "Access Denied: Unauthorized origin or missing Origin header. Please use the app API key if you are an authorized mobile client." });
+    }
+
+    next();
+});
 // Security Headers Middleware
 app.use((req, res, next) => {
     res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
