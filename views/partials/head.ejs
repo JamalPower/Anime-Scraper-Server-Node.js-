@@ -565,14 +565,28 @@
     }
     
     .about-profile-card {
-        background: linear-gradient(135deg, rgba(22, 24, 39, 0.6) 0%, rgba(28, 31, 50, 0.4) 100%);
+        background: rgba(22, 24, 39, 0.4);
         border: 1px solid var(--border);
         border-radius: 20px;
         padding: 50px;
         backdrop-filter: blur(10px);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
-    
+    .about-profile-card .bg-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=700&q=80&auto=format&fit=crop');
+        z-index: -1;
+        border-radius: 20px;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        opacity: 0.2;
+       
+    }
     .profile-layout {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -590,7 +604,7 @@
         width: 100%;
         aspect-ratio: 1;
         object-fit: cover;
-        border-radius: 16px;
+        border-radius: 20%;
         border: 1px solid var(--border);
     }
     
@@ -610,6 +624,7 @@
         font-size: 0.95rem;
         color: var(--accent);
         font-weight: 700;
+        gap: 8px;
         margin-bottom: 25px;
         display: inline-block;
         padding: 6px 16px;
@@ -630,7 +645,6 @@
     .social-links {
         display: flex;
         gap: 20px;
-        align-items: center;
     }
     
     .social-link {
