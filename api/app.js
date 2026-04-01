@@ -689,7 +689,7 @@ app.get("/clear-db", async (req, res) => {
       schedule: null 
   });
   
-  res.send({ message: "Cache successfully cleared! Go visit the home page again" });
+  res.send({ message: "Cache successfully cleared! Go visit the home page again." });
 });
 app.get("/db-test", async (req, res) => {
     const server_name = `server_${req.query.server || '1'}`;
