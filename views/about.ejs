@@ -1,109 +1,152 @@
 <%- include('partials/head.ejs') %>
 
-<main class="container">
-    <div class="about-hero">
-        <div class="bg-overlay"></div>
-        <div class="profile-img"><img src="https://i.ibb.co/27cVjQ49/profile.jpg" alt="profile"></div>
-        <div class="dev-badge"></div>
-        <h1 style="font-size: 3rem; font-weight: 900; margin-bottom: 10px; font-family: 'Outfit', sans-serif;">Jamal Nexo</h1>
-        <p style="color: var(--text); font-size: 1.1rem; max-width: 600px; margin: 0 auto;">مرحباً بكم في AnimeNexo، المنصة الرائدة لمتابعة آخر صرعات الأنمي والأفلام بجودة عالية وسرعة فائقة.</p>
-        
-        <div class="social-links">
-            <a href="https://www.facebook.com/share/1DNoNTwZdK/" class="social-card">
-                <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                <span>Facebook</span>
-            </a>
-            <a href="https://www.instagram.com/jamal_na1?igsh=MW4wMzdqYXR6NTdmYw==" class="social-card">
-                <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.012 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.012 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.012-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.962.477 1.381.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.962-.899 1.381-.419.419-.824.679-1.38.896-.419.164-1.057.36-2.227.413-1.266.057-1.646.072-4.85.072s-3.585-.015-4.85-.074c-1.17-.061-1.805-.256-2.227-.421-.562-.224-.962-.479-1.381-.899-.419-.419-.679-.824-.896-1.38-.164-.419-.36-1.057-.413-2.227-.057-1.266-.072-1.646-.072-4.85s.015-3.585.074-4.85c.061-1.17.256-1.805.421-2.227.224-.562.479-.962.899-1.381.419-.419.824-.679 1.38-.896.419-.164 1.057-.36 2.227-.413 1.266-.057 1.646-.072 4.85-.072zM12 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-                <span>Instagram</span>
-            </a>
-            <a href="#" class="social-card">
-                <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.042-1.416-4.042-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                <span>GitHub</span>
-            </a>
-        </div>
-    </div>
-
-    <section class="vision-section">
-        <div class="vision-content">
-            <div class="vision-icon">
-                <i class="fa-solid fa-eye"></i>
+<main class="snap-container">
+    <!-- SCREEN 1: Developer, Vision -->
+    <section class="snap-section" id="screen-1">
+        <div class="snap-content screen1-layout">
+            <div class="s1-left anim-left">
+                <div class="about-hero-snap">
+                    <div class="profile-img-snap"><img src="https://i.ibb.co/27cVjQ49/profile.jpg" alt="profile"></div>
+                    <div class="dev-badge-snap"></div>
+                    <h1>Jamal Nexo</h1>
+                    <p>مرحباً بكم في AnimeNexo، المنصة الرائدة لمتابعة آخر صرعات الأنمي والأفلام.</p>
+                </div>
             </div>
-            <h2>رؤيتنا</h2>
-            <p>نسعى لأن نكون الوجهة الأولى لكل محبي الأنمي في الوطن العربي، من خلال تقديم تجربة مستخدم سلسة، واجهة جذابة، وتقنيات حديثة تضمن لك أفضل متابعة ممكنة دون إعلانات مزعجة.</p>
+            <div class="s1-right anim-right">
+                <div class="vision-box delay-1">
+                    <div class="vision-icon-snap"><i class="fa-solid fa-eye"></i></div>
+                    <h2>رؤيتنا</h2>
+                    <p>نسعى لأن نكون الوجهة الأولى لكل محبي الأنمي في الوطن العربي، من خلال تقديم تجربة مستخدم سلسة وتقنيات حديثة تضمن لك أفضل متابعة ممكنة بدون إعلانات مزعجة.</p>
+                </div>
+                <div class="goals-box delay-2">
+                    <div class="vision-icon-snap"><i class="fa-solid fa-bullseye"></i></div>
+                    <h2>أهدافنا</h2>
+                    <ul>
+                        <li><i class="fa-solid fa-check"></i> توفير أحدث الحلقات بسرعات عالية.</li>
+                        <li><i class="fa-solid fa-check"></i> تصميم خالي تماماً من الإعلانات المزعجة.</li>
+                        <li><i class="fa-solid fa-check"></i> مكتبة شاملة ترضي جميع الأذواق.</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </section>
 
-    <section class="features-section">
-        <div class="section-header-center">
-            <h2>لماذا AnimeNexo؟</h2>
-            <p>نقدم لك أفضل الميزات لتجربة مشاهدة أنمي استثنائية</p>
+    <!-- SCREEN 2: Features & Statistics -->
+    <section class="snap-section" id="screen-2">
+        <div class="snap-content section-center">
+            <h2 class="section-title-snap anim-fade-up">الميزات والأرقام</h2>
+            <div class="stats-grid-snap">
+                <div class="stat-card anim-zoom delay-1">
+                    <i class="fa-solid fa-clapperboard stat-icon-snap"></i>
+                    <h3 class="counter" data-target="+10000">0</h3>
+                    <p>أعمال أنمي</p>
+                </div>
+                <div class="stat-card anim-zoom delay-2">
+                    <i class="fa-solid fa-film stat-icon-snap"></i>
+                    <h3 class="counter" data-target="+500">0</h3>
+                    <p>فيلم حصري</p>
+                </div>
+                <div class="stat-card anim-zoom delay-3">
+                    <i class="fa-solid fa-server stat-icon-snap"></i>
+                    <h3 class="counter" data-target="+3">0</h3>
+                    <p>سيرفر مشاهدة</p>
+                </div>
+                <div class="stat-card anim-zoom delay-4">
+                    <i class="fa-solid fa-face-smile-beam stat-icon-snap"></i>
+                    <h3><span class="counter" data-target="100">0</span>%</h3>
+                    <p>مجاني دائماً</p>
+                </div>
+            </div>
         </div>
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">
+    </section>
+
+    <!-- SCREEN 3: News & Features Guide -->
+    <section class="snap-section" id="screen-3">
+        <div class="snap-content section-center">
+            <h2 class="section-title-snap anim-fade-up">أخبارنا ومميزات الواجهة</h2>
+            <div class="news-grid-snap">
+                <div class="news-card anim-fade-up delay-1">
                     <i class="fa-solid fa-bolt"></i>
+                    <h3>سرعة فائقة</h3>
+                    <p>تجربة استثنائية مع سيرفرات مخصصة تضمن لك سرعة في التصفح والمشاهدة بخلاف المواقع الأخرى.</p>
                 </div>
-                <h3>سرعة فائقة</h3>
-                <p>سرعة جيدة في التحميل والبث لتجربة مشاهدة ممتعة وخالية من التقطيع أو التأخير المستمر.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fa-solid fa-server"></i>
+                <div class="news-card anim-fade-up delay-2">
+                    <i class="fa-solid fa-moon"></i>
+                    <h3>واجهة مظلمة وجذابة</h3>
+                    <p>تصميم داكن (Dark Mode) مريح للعين، مصمم خصيصاً لمشاهدتك لأطول فترة دون إرهاق عينيك.</p>
                 </div>
-                <h3>سيرفرات متعددة</h3>
-                <p>تعدد المصادر والسيرفرات لضمان توفر الحلقات وجودة عالية تلائم سرعة الإنترنت لديك.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
+                <div class="news-card anim-fade-up delay-3">
                     <i class="fa-solid fa-mobile-screen"></i>
+                    <h3>متجاوب بالكامل</h3>
+                    <p>الواجهة تعمل بكفاءة على جميع الأجهزة من الهاتف إلى الشاشات الذكية، بطريقة عرض تشبه التطبيقات الحديثة.</p>
                 </div>
-                <h3>واجهة حديثة</h3>
-                <p>واجهة مستخدم عصرية بتصميم تفاعلي يضمن لك سهولة التصفح، وتدعم جميع الأجهزة والهواتف.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fa-solid fa-database"></i>
-                </div>
-                <h3>مكتبة ضخمة</h3>
-                <p>محتوى متجدد يومياً لأحدث الأنميات المترجمة، مع تغطية شاملة لكافة التصنيفات والأفلام.</p>
             </div>
         </div>
     </section>
 
-    <!-- Stats Section -->
-    <section class="stats-section">
-        <div class="stat-box">
-            <i class="fa-solid fa-clapperboard stat-icon"></i>
-            <h3 class="counter" data-target="+10000">0</h3>
-            <p>أعمال أنمي</p>
-        </div>
-        <div class="stat-box">
-            <i class="fa-solid fa-film stat-icon"></i>
-            <h3 class="counter" data-target="+500">0</h3>
-            <p>فيلم حصري</p>
-        </div>
-        <div class="stat-box">
-            <i class="fa-solid fa-server stat-icon"></i>
-            <h3 class="counter" data-target="+3">0</h3>
-            <p>سيرفر مشاهدة</p>
-        </div>
-        <div class="stat-box">
-            <i class="fa-solid fa-face-smile-beam stat-icon"></i>
-            <h3><span class="counter" data-target="100">0</span>%</h3>
-            <p>مجاني دائماً</p>
+    <!-- SCREEN 4: Contact & Footer -->
+    <section class="snap-section" id="screen-4">
+        <div class="snap-content section-bottom">
+            <div class="contact-layout">
+                <!-- Left: Form -->
+                <div class="contact-form anim-left">
+                    <h2>تواصل معنا</h2>
+                    <p>لديك اقتراح أو واجهت مشكلة؟ شاركنا رأيك للمساعدة في تطوير AnimeNexo.</p>
+                    <form onsubmit="event.preventDefault(); alert('تم الإرسال بنجاح! شكراً لك.'); this.reset();">
+                        <div class="input-group">
+                            <input type="text" placeholder="الاسم" required>
+                        </div>
+                        <div class="input-group">
+                            <input type="email" placeholder="البريد الإلكتروني" required>
+                        </div>
+                        <div class="input-group">
+                            <textarea placeholder="رسالتك (اقتراح / مشكلة)" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn"><i class="fa-solid fa-paper-plane"></i> إرسال</button>
+                    </form>
+                </div>
+
+                <!-- Right: Links & Socials -->
+                <div class="contact-info anim-right delay-2">
+                    <div class="links-box">
+                        <h3>روابط سريعة</h3>
+                        <ul>
+                            <li><a href="/">الرئيسية</a></li>
+                            <li><a href="/anime-list">قائمة الأنمي</a></li>
+                            <li><a href="/movie-list">قائمة الأفلام</a></li>
+                            <li><a href="/schedule">مواعيد الحلقات</a></li>
+                            <li><a href="/search">البحث</a></li>
+                            <li><a href="/about">حولنا</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="social-box">
+                        <h3>حساباتي</h3>
+                        <div class="social-links-snap">
+                            <a href="https://www.facebook.com/share/1DNoNTwZdK/" class="social-icon facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                            <a href="https://www.instagram.com/jamal_na1?igsh=MW4wMzdqYXR6NTdmYw==" class="social-icon instagram"><i class="fa-brands fa-instagram"></i></a>
+                            <a href="https://github.com/JamalPower" class="social-icon github"><i class="fa-brands fa-github"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-snap anim-fade-up delay-4">
+                <p>© 2026 جميع الحقوق محفوظة لـ <strong>Jamal Nexo</strong></p>
+                <div class="footer-links">
+                     <a href="/about">حولنا</a>
+                     <a href="#">الشروط</a>
+                     <a href="#">الخصوصية</a>
+                </div>
+            </div>
         </div>
     </section>
-
-    <div style="text-align:center; padding-bottom: 40px; opacity: 0.6; font-size: 0.9rem;">
-        <p>© 2026 جميع الحقوق محفوظة لـ <strong>Jamal Nexo</strong></p>
-    </div>
 </main>
 
 <script>
-    // Counters animation with Intersection Observer
+    // 1. Counters logic
     const counters = document.querySelectorAll('.counter');
-    const speed = 200; 
+    const speed = 100; // faster animation for snap 
     
     const animateCounters = () => {
         counters.forEach(counter => {
@@ -111,30 +154,53 @@
                 const rawTarget = counter.getAttribute('data-target');
                 const hasPlus = rawTarget.startsWith('+');
                 const target = +(rawTarget.replace('+', ''));
-                const count = +(counter.innerText.replace('+', ''));
+                let count = +(counter.innerText.replace('+', ''));
+                if(isNaN(count)) count = 0;
                 const inc = target / speed;
                 
                 if (count < target) {
                     counter.innerText = (hasPlus ? "+" : "") + Math.ceil(count + inc);
-                    setTimeout(updateCount, 15);
+                    setTimeout(updateCount, 20);
                 } else {
                     counter.innerText = rawTarget;
                 }
             };
-            updateCount();
+            if(counter.innerText === "0" || counter.innerText === "") {
+                updateCount();
+            }
         });
     };
 
-    const statsSection = document.querySelector('.stats-section');
-    if (statsSection) {
-        const observer = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
-                animateCounters();
-                observer.disconnect();
+    // 2. Intersection Observer for Snap Sections & Animations
+    const sections = document.querySelectorAll('.snap-section');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Add visible class to trigger CSS animations inside the section
+                entry.target.classList.add('is-visible');
+                
+                // If it's the stats section (Screen 2), trigger counters
+                if(entry.target.id === 'screen-2') {
+                    animateCounters();
+                }
+            } else {
+                // Remove visible class when it leaves screen so it repeats when scrolling back
+                entry.target.classList.remove('is-visible');
+                
+                // Reset counters if they leave screen so they animate again
+                if(entry.target.id === 'screen-2') {
+                    counters.forEach(c => c.innerText = "0");
+                }
             }
-        }, { threshold: 0.5 });
-        observer.observe(statsSection);
-    }
+        });
+    }, {
+        threshold: 0.2 // Trigger when 20% of section is visible
+    });
+
+    sections.forEach(sec => {
+        observer.observe(sec);
+    });
 </script>
 
 <%- include('partials/footer.ejs') %>

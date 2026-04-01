@@ -742,8 +742,3 @@ async function animeCachTable(server_name){
 //------------------------------------------------------
 // For Vercel serverless deployment
 module.exports = app;
-
-// For local development (uncomment if needed)
-// app.listen(PORT, () => {
-//     console.log(`Server started on port ${localhost}`);
-// });
