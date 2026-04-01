@@ -735,10 +735,9 @@ async function animeCachTable(server_name){
             table.json("search");
             table.timestamp("time");
             table.timestamps(true, true);
-        });
-    }
+
+        });    
+    }    
 }
-//==========================================================
-//------------------------------------------------------
-// For Vercel serverless deployment
+
 module.exports = app;

@@ -1,37 +1,53 @@
 <%- include('partials/head.ejs') %>
 
 <main class="snap-container">
-    <!-- SCREEN 1: Hero & About -->
+    <!-- SCREEN 1: Developer Profile & Vision/Goals -->
     <section class="snap-section" id="screen-1">
-        <div class="snap-content">
-            <div class="hero-unified-card anim-zoom">
-                <div class="hero-profile-container">
+        <div class="snap-content section-center">
+            <!-- Developer Profile Card -->
+            <div class="developer-profile-card anim-zoom">
+                <div class="profile-image-container">
                     <div class="profile-glow">
                         <img src="https://i.ibb.co/27cVjQ49/profile.jpg" alt="Jamal Nexo">
                     </div>
                 </div>
                 
-                <div class="hero-text-center">
-                    <span class="hero-badge"><i class="fa-solid fa-code"></i> المطور و المؤسس</span>
-                    <h1 class="hero-name">Jamal Nexo</h1>
-                    <p class="hero-desc">مرحباً بك في عالمي! المنصة الرائدة لمتابعة آخر صرعات الأنمي والأفلام بجودة استثنائية وبدون إعلانات مزعجة.</p>
+                <div class="profile-info">
+                    <span class="profile-badge"><i class="fa-solid fa-code"></i> المطور و المؤسس</span>
+                    <h1 class="profile-name">Jamal Nexo</h1>
+                    <p class="profile-description">مرحباً بك في عالمي! المنصة الرائدة لمتابعة آخر صرعات الأنمي والأفلام بجودة استثنائية وبدون إعلانات مزعجة.</p>
+                    
+                    <!-- Social Media Buttons -->
+                    <div class="social-buttons">
+                        <a href="https://www.facebook.com/share/1DNoNTwZdK/" class="social-btn facebook" title="Facebook">
+                            <i class="fa-brands fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.instagram.com/jamal_na1?igsh=MW4wMzdqYXR6NTdmYw==" class="social-btn instagram" title="Instagram">
+                            <i class="fa-brands fa-instagram"></i>
+                        </a>
+                        <a href="https://github.com/JamalPower" class="social-btn github" title="GitHub">
+                            <i class="fa-brands fa-github"></i>
+                        </a>
+                    </div>
                 </div>
+            </div>
 
-                <div class="hero-vision-goals">
-                     <div class="vg-item anim-fade-up delay-1">
-                         <div class="vg-icon"><i class="fa-solid fa-eye"></i></div>
-                         <div class="vg-text">
-                            <h3>رؤيتنا</h3>
-                            <p>الوجهة الأولى لكل محبي الأنمي بتجربة مستخدم سلسة وتقنيات حديثة.</p>
-                         </div>
-                     </div>
-                     <div class="vg-item anim-fade-up delay-2">
-                         <div class="vg-icon"><i class="fa-solid fa-bullseye"></i></div>
-                         <div class="vg-text">
-                            <h3>أهدافنا</h3>
-                            <p>توفير أحدث الحلقات بسرعات عالية وتصميم مريح خالي تماماً من الإعلانات.</p>
-                         </div>
-                     </div>
+            <!-- Vision & Goals Cards -->
+            <div class="vision-goals-container">
+                <div class="vg-card anim-fade-up delay-1">
+                    <div class="vg-header">
+                        <i class="fa-solid fa-eye"></i>
+                        <h3>رؤيتنا</h3>
+                    </div>
+                    <p>الوجهة الأولى لكل محبي الأنمي بتجربة مستخدم سلسة وتقنيات حديثة.</p>
+                </div>
+                
+                <div class="vg-card anim-fade-up delay-2">
+                    <div class="vg-header">
+                        <i class="fa-solid fa-bullseye"></i>
+                        <h3>أهدافنا</h3>
+                    </div>
+                    <p>توفير أحدث الحلقات بسرعات عالية وتصميم مريح خالي تماماً من الإعلانات.</p>
                 </div>
             </div>
         </div>
@@ -105,63 +121,17 @@
         </div>
     </section>
 
-    <!-- SCREEN 4: Contact & Footer -->
-    <section class="snap-section" id="screen-4">
-        <div class="snap-content section-bottom">
-            <div class="contact-layout">
-                <!-- Left: Form -->
-                <div class="contact-form anim-left">
-                    <h2>تواصل معنا</h2>
-                    <p>لديك اقتراح أو واجهت مشكلة؟ شاركنا رأيك للمساعدة في تطوير AnimeNexo.</p>
-                    <form onsubmit="event.preventDefault(); alert('تم الإرسال بنجاح! شكراً لك.'); this.reset();">
-                        <div class="input-group">
-                            <input type="text" placeholder="الاسم" required>
-                        </div>
-                        <div class="input-group">
-                            <input type="email" placeholder="البريد الإلكتروني" required>
-                        </div>
-                        <div class="input-group">
-                            <textarea placeholder="رسالتك (اقتراح / مشكلة)" rows="4" required></textarea>
-                        </div>
-                        <button type="submit" class="submit-btn"><i class="fa-solid fa-paper-plane"></i> إرسال</button>
-                    </form>
-                </div>
-
-                <!-- Right: Links & Socials -->
-                <div class="contact-info anim-right delay-2">
-                    <div class="links-box">
-                        <h3>روابط سريعة</h3>
-                        <ul>
-                            <li><a href="/">الرئيسية</a></li>
-                            <li><a href="/anime-list">قائمة الأنمي</a></li>
-                            <li><a href="/movie-list">قائمة الأفلام</a></li>
-                            <li><a href="/schedule">مواعيد الحلقات</a></li>
-                            <li><a href="/search">البحث</a></li>
-                            <li><a href="/about">حولنا</a></li>
-                        </ul>
-                    </div>
-
-                    <div class="social-box">
-                        <h3>حساباتي</h3>
-                        <div class="social-links-snap">
-                            <a href="https://www.facebook.com/share/1DNoNTwZdK/" class="social-icon facebook"><i class="fa-brands fa-facebook-f"></i></a>
-                            <a href="https://www.instagram.com/jamal_na1?igsh=MW4wMzdqYXR6NTdmYw==" class="social-icon instagram"><i class="fa-brands fa-instagram"></i></a>
-                            <a href="https://github.com/JamalPower" class="social-icon github"><i class="fa-brands fa-github"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="footer-snap anim-fade-up delay-4">
-                <p>© 2026 جميع الحقوق محفوظة لـ <strong>Jamal Nexo</strong></p>
-                <div class="footer-links">
-                     <a href="/about">حولنا</a>
-                     <a href="#">الشروط</a>
-                     <a href="#">الخصوصية</a>
-                </div>
+    <!-- Footer -->
+    <footer class="footer-section">
+        <div class="footer-snap anim-fade-up">
+            <p>© 2026 جميع الحقوق محفوظة لـ <strong>Jamal Nexo</strong></p>
+            <div class="footer-links">
+                <a href="/about">حولنا</a>
+                <a href="#">الشروط</a>
+                <a href="#">الخصوصية</a>
             </div>
         </div>
-    </section>
+    </footer>
 </main>
 
 <script>

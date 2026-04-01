@@ -647,6 +647,218 @@
     .footer-links a { color: var(--muted); font-size: 0.9rem; font-weight: 700; transition: color 0.3s; }
     .footer-links a:hover { color: var(--accent); }
 
+    /* REDESIGNED ABOUT PAGE */
+    
+    /* Developer Profile Card */
+    .developer-profile-card {
+        background: linear-gradient(135deg, rgba(28, 31, 50, 0.8) 0%, rgba(22, 24, 39, 0.8) 100%);
+        border: 1px solid rgba(124, 92, 252, 0.4);
+        border-radius: 24px;
+        padding: 60px 50px;
+        max-width: 700px;
+        margin: 0 auto 50px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(124, 92, 252, 0.15);
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .developer-profile-card::before {
+        content: '';
+        position: absolute;
+        top: -50%; left: -50%;
+        width: 200%; height: 200%;
+        background: radial-gradient(circle, rgba(124, 92, 252, 0.1) 0%, transparent 70%);
+        animation: float 8s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+    }
+    
+    .profile-image-container {
+        margin-bottom: 30px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .profile-image-container .profile-glow {
+        width: 180px;
+        height: 180px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        padding: 8px;
+        border-radius: 50%;
+        box-shadow: 0 15px 40px rgba(124, 92, 252, 0.4), inset 0 0 30px rgba(124, 92, 252, 0.2);
+    }
+    
+    .profile-image-container .profile-glow img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 5px solid var(--card);
+        object-fit: cover;
+    }
+    
+    .profile-info {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .profile-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(124, 92, 252, 0.15);
+        border: 1px solid var(--accent);
+        color: var(--accent);
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-size: 0.95rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+    }
+    
+    .profile-name {
+        font-size: 3.5rem;
+        font-weight: 900;
+        font-family: 'Outfit', sans-serif;
+        color: #fff;
+        margin-bottom: 15px;
+        background: linear-gradient(135deg, #fff, var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .profile-description {
+        font-size: 1.15rem;
+        color: var(--muted);
+        line-height: 1.8;
+        margin-bottom: 35px;
+        max-width: 600px;
+    }
+    
+    /* Social Buttons */
+    .social-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        margin-top: 20px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .social-btn {
+        width: 70px;
+        height: 70px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: #fff;
+        border: 2px solid var(--border);
+        background: rgba(13, 15, 26, 0.6);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+    }
+    
+    .social-btn:hover {
+        transform: translateY(-8px) scale(1.15);
+        box-shadow: 0 15px 30px rgba(124, 92, 252, 0.3);
+    }
+    
+    .social-btn.facebook:hover {
+        background: #1877F2;
+        border-color: #1877F2;
+        box-shadow: 0 15px 30px rgba(24, 119, 242, 0.4);
+    }
+    
+    .social-btn.instagram:hover {
+        background: linear-gradient(135deg, #E4405F, #FDBB4B);
+        border-color: #E4405F;
+        box-shadow: 0 15px 30px rgba(228, 64, 95, 0.4);
+    }
+    
+    .social-btn.github:hover {
+        background: #333;
+        border-color: #fff;
+        box-shadow: 0 15px 30px rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Vision & Goals Horizontal Cards */
+    .vision-goals-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+        width: 100%;
+        max-width: 1000px;
+        margin: 0 auto 50px;
+    }
+    
+    .vg-card {
+        background: linear-gradient(135deg, rgba(28, 31, 50, 0.7) 0%, rgba(22, 24, 39, 0.7) 100%);
+        border: 1px solid rgba(124, 92, 252, 0.25);
+        border-radius: 18px;
+        padding: 40px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    .vg-card:hover {
+        border-color: rgba(124, 92, 252, 0.6);
+        transform: translateY(-8px);
+        box-shadow: 0 20px 50px rgba(124, 92, 252, 0.2);
+    }
+    
+    .vg-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+        justify-content: center;
+        flex-direction: column;
+    }
+    
+    .vg-header i {
+        font-size: 2.5rem;
+        color: var(--accent);
+        background: rgba(124, 92, 252, 0.15);
+        width: 70px;
+        height: 70px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(124, 92, 252, 0.3);
+    }
+    
+    .vg-header h3 {
+        font-size: 1.6rem;
+        color: #fff;
+        font-weight: 800;
+        text-align: center;
+    }
+    
+    .vg-card p {
+        font-size: 1.05rem;
+        color: var(--muted);
+        line-height: 1.8;
+        text-align: center;
+    }
+    
+    /* Footer Section */
+    .footer-section {
+        background: linear-gradient(135deg, rgba(13, 15, 26, 0.8) 0%, rgba(22, 24, 39, 0.8) 100%);
+        border-top: 1px solid var(--border);
+        padding: 40px 20px;
+        text-align: center;
+    }
+
     /* ANIMATIONS SETUP */
     [class*="anim-"] { opacity: 0; transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
     .anim-left { transform: translateX(-40px); }
@@ -1003,28 +1215,35 @@
 
       /* ABOUT US CRITICAL RESPONSIVE REWRITES */
       .snap-container { scroll-snap-type: none; height: auto; overflow: visible; }
-      .snap-section { height: auto; min-height: 100vh; padding-top: 100px; padding-bottom: 40px; scroll-snap-align: none; }
+      .snap-section { height: auto; min-height: auto; padding-top: 80px; padding-bottom: 40px; scroll-snap-align: none; }
       .snap-content { padding: 0 15px; }
 
-      .hero-unified-card { padding: 30px 20px; border-radius: 16px; }
-      .hero-name { font-size: 2.2rem; }
-      .hero-desc { font-size: 1rem; }
-      .hero-vision-goals { grid-template-columns: 1fr; gap: 15px; padding-top: 20px; }
-      .vg-item { padding: 20px 15px; }
+      /* Developer Profile Card Mobile */
+      .developer-profile-card { padding: 40px 20px; margin-bottom: 30px; }
+      .profile-name { font-size: 2.2rem; }
+      .profile-description { font-size: 1rem; }
+      .profile-image-container .profile-glow { width: 140px; height: 140px; }
+      .social-buttons { gap: 15px; }
+      .social-btn { width: 60px; height: 60px; font-size: 1.5rem; }
       
+      /* Vision & Goals Mobile */
+      .vision-goals-container { grid-template-columns: 1fr; gap: 20px; margin-bottom: 30px; }
+      .vg-card { padding: 30px 20px; }
+      .vg-header i { font-size: 2rem; width: 60px; height: 60px; }
+      .vg-header h3 { font-size: 1.3rem; }
+      .vg-card p { font-size: 1rem; }
+      
+      /* Stats Mobile */
       .stats-grid-snap { grid-template-columns: 1fr 1fr; gap: 15px; }
       .stat-card { padding: 20px 10px; }
       .stat-icon-snap { font-size: 1.8rem; margin-bottom: 10px; }
       .stat-card h3 { font-size: 2rem; }
       
+      /* Features Mobile */
       .news-grid-snap { grid-template-columns: 1fr; gap: 15px; }
       .news-card { padding: 20px 15px; }
       .news-card i { width: 50px; height: 50px; font-size: 1.4rem; margin-bottom: 15px; }
       
-      .contact-layout { grid-template-columns: 1fr; gap: 30px; text-align: center; }
-      .contact-info h3::before { display: none; }
-      .social-links-snap { justify-content: center; }
-      .submit-btn { margin: 0 auto; }
       
       .footer-snap { flex-direction: column; gap: 15px; padding: 15px 0; }
     }
