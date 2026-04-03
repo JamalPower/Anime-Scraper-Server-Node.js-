@@ -1,36 +1,12 @@
 <%- include('partials/head.ejs') %>
 
 <style>
-    .news-hero {
-        padding: 60px 0 40px;
-        text-align: center;
-        background: linear-gradient(180deg, rgba(124, 92, 252, 0.1) 0%, transparent 100%);
-        margin-bottom: 40px;
-        border-radius: 0 0 50px 50px;
-    }
-    .news-hero h1 {
-        font-size: 3rem;
-        font-weight: 900;
-        margin-bottom: 10px;
-        background: linear-gradient(135deg, #fff 0%, var(--muted) 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-    .news-hero p { color: var(--muted); font-size: 1.1rem; }
-
     .nexo-news-empty { text-align: center; padding: 100px 20px; background: var(--surface); border-radius: 20px; border: 1px dashed var(--border); }
-
-    @media (max-width: 768px) {
-        .news-hero h1 { font-size: 2rem; }
-    }
+    @media (max-width: 768px) { .nexo-news-empty { padding: 60px 14px; } }
 </style>
 
-<div class="news-hero">
-    <div class="container">
-        <h1>أخبار الأنمي</h1>
-        <p>اكتشف عالم الأنمي من خلال أحدث الأخبار والتقارير الحصرية</p>
-    </div>
+<div class="list-header" style="margin-top:20px; margin-bottom:18px;">
+    <h2 class="section-title" style="margin-bottom:0;"><%= title || 'أخبار الأنمي' %></h2>
 </div>
 
 <main class="container">
@@ -50,7 +26,7 @@
                         </div>
                         <h2 class="nexo-news-title"><%= news.title %></h2>
                         <div class="nexo-news-footer">
-                            <span class="nexo-news-cta">اقرأ المزيد <i class="fa-solid fa-arrow-left"></i></span>
+                            <button class="nexo-news-cta" type="button" data-url="/news-article?url=<%= encodeURIComponent(news.url) %>&server=<%= currentServer %>" aria-label="نسخ الرابط">نسخ الرابط <i class="fa-solid fa-copy"></i></button>
                         </div>
                     </div>
                 </div>
@@ -65,3 +41,32 @@
 </main>
 
 <%- include('partials/footer.ejs') %>
+
+<script>
+        // Copy link buttons for news grid (copy absolute URL)
+        document.addEventListener('click', function (e) {
+            const btn = e.target.closest('.nexo-news-cta');
+            if (!btn) return;
+            let url = btn.getAttribute('data-url');
+            if (!url) return;
+            // If it's a relative internal path, make absolute
+            if (!url.startsWith('http')) {
+                url = window.location.origin + url;
+            }
+            const doCopy = (text) => navigator.clipboard && navigator.clipboard.writeText(text)
+                .then(() => true).catch(() => false);
+
+            doCopy(url).then(success => {
+                const old = btn.innerHTML;
+                btn.innerHTML = 'تم النسخ ✓';
+                setTimeout(() => btn.innerHTML = old, 1600);
+                if (!success) {
+                    // fallback
+                    const ta = document.createElement('textarea'); ta.value = url; document.body.appendChild(ta); ta.select();
+                    try { document.execCommand('copy'); }
+                    catch (err) { alert('تعذر نسخ الرابط'); }
+                    ta.remove();
+                }
+            });
+        });
+</script>
