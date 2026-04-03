@@ -518,7 +518,7 @@ app.get("/season-anime", async (req, res) => {
             // Row doesn't exist at all, scrape and insert row
             const result = await standardizer.getSeasonAnime(srv, page);
             
-            // Only save to cache if data is valid
+            // Only save to cache if data is valid.
             if (result && result.data && result.data.length > 0) {
                 const initialListCache = {
                     [cacheKey]: { data: result, time: timeNow }
