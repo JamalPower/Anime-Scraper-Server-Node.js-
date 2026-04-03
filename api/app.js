@@ -485,7 +485,6 @@ app.get("/movie-list", async (req, res) => {
                     baseUrl: "/movie-list"
                 });
             } else {
-                // Cached and fresh -> serve from DB
                 const result = pageCache.data;
                 res.render("list-page", { 
                     title: "قائمة الافلام", 
