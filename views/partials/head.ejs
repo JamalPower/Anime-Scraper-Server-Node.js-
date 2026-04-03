@@ -12,6 +12,61 @@
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    /* NEXO NEWS WIDGET - namespaced inline copy (serves without static middleware) */
+    .nexo-news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    .nexo-news-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 100%);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.35s var(--transition), box-shadow 0.35s var(--transition);
+      cursor: pointer;
+      min-height: 220px;
+    }
+
+    .nexo-news-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(124,92,252,0.12);
+      border-color: rgba(124,92,252,0.28);
+    }
+
+    .nexo-news-thumb { width: 100%; aspect-ratio: 16/9; overflow: hidden; background: #0b0c13; }
+    .nexo-news-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(.2,.8,.2,1); }
+    .nexo-news-card:hover .nexo-news-thumb img { transform: scale(1.06); }
+
+    .nexo-news-content { padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; flex: 1; background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent); }
+
+    .nexo-news-meta { font-size: 0.82rem; color: var(--muted); display:flex; gap:10px; align-items:center; }
+    .nexo-news-meta i { color: rgba(255,255,255,0.6); margin-left: 6px; }
+
+    .nexo-news-title { font-size: 1.05rem; font-weight: 800; color: #fff; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin: 0; }
+
+    .nexo-news-excerpt { color: var(--muted); font-size: 0.95rem; line-height: 1.6; display: -webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; margin-top:6px; }
+
+    .nexo-news-footer { margin-top: auto; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .nexo-news-cta { color: var(--accent); font-weight:800; display:flex; align-items:center; gap:8px; }
+
+    .nexo-news-view-all { display: inline-flex; align-items: center; gap: 10px; background: rgba(124, 92, 252, 0.08); border: 1px solid rgba(124,92,252,0.14); padding: 10px 22px; border-radius: 50px; color: #fff; font-weight: 700; font-size: 0.95rem; transition: transform 0.18s; }
+    .nexo-news-view-all:hover { transform: translateX(-6px); background: var(--accent); }
+
+    .nexo-news-empty { text-align:center; padding: 80px 20px; background: var(--surface); border-radius: 14px; border: 1px dashed var(--border); }
+
+    @media (max-width: 768px) {
+      .nexo-news-grid { grid-template-columns: 1fr; gap: 18px; }
+      .nexo-news-card { min-height: auto; border-radius: 12px; }
+      .nexo-news-title { font-size: 1rem; }
+      .nexo-news-excerpt { -webkit-line-clamp: 4; }
+    }
+  </style>
+  <style>
     /* ──────────────────── RESET & BASE (RTL) ──────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
