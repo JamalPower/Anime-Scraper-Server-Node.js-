@@ -1,6 +1,7 @@
 const HomeContent_1 = require('./HomeContent_1');
 const HomeContent_2 = require('./HomeContent_2');
 const HomeContent_3 = require('./HomeContent_3');
+const GetNews = require('./getNews');
 
 
 class DataStandardizer {
@@ -11,15 +12,17 @@ class DataStandardizer {
      */
     async getLatestData(offset) {
         const strOffset = String(offset);
+        const newsPromise = this.getNewsList().catch(() => ({ newsList: [] }));
 
         // 1: ristoanime.co
         if (strOffset === '1') {
             const home = new HomeContent_1();
-            const [slider, latest, movies, episodes] = await Promise.all([
+            const [slider, latest, movies, episodes, news] = await Promise.all([
                 home.sliderContent().catch(() => []),
                 home.content().catch(() => ({ animeList: [] })),
                 home.content('newMovies').catch(() => ({ animeList: [] })),
-                home.content('newEpisodes').catch(() => ({ animeList: [] }))
+                home.content('newEpisodes').catch(() => ({ animeList: [] })),
+                newsPromise
             ]);
 
             return {
@@ -28,17 +31,19 @@ class DataStandardizer {
                     { title: "أحدث الحلقات", data: this.formatList(episodes.animeList || []) },
                     { title: "أحدث الأنميات", data: this.formatList(latest.animeList || []) },
                     { title: "أحدث الأفلام", data: this.formatList(movies.animeList || []) }
-                ].filter(row => row.data && row.data.length > 0)
+                ].filter(row => row.data && row.data.length > 0),
+                news: news.newsList.slice(0, 4)
             };
         } 
         // 2: animesit.com
         else if (strOffset === '2') {
             const home = new HomeContent_2();
-            const [latest, movies, completed, continuous] = await Promise.all([
+            const [latest, movies, completed, continuous, news] = await Promise.all([
                 home.content().catch((err) => ({ animeList: [] })),
                 home.animeMovies().catch(() => ({ animeList: [] })),
                 home.animeCompleted().catch(() => ({ animeList: [] })),
-                home.animeContinuous().catch(() => ({ animeList: [] }))
+                home.animeContinuous().catch(() => ({ animeList: [] })),
+                newsPromise
             ]);
 
             return {
@@ -48,21 +53,23 @@ class DataStandardizer {
                     { title: "أحدث الأفلام", data: this.formatList(movies.animeList || []) },
                     { title: "الأنميات المكتملة", data: this.formatList(completed.animeList || []) },
                     { title: "الأنميات المستمرة", data: this.formatList(continuous.animeList || []) }
-                ].filter(row => row.data && row.data.length > 0)
+                ].filter(row => row.data && row.data.length > 0),
+                news: news.newsList.slice(0, 4)
             };
         } 
         // 3: animelek.vip
         else if (strOffset === '3') {
             const home = new HomeContent_3();
-            // content() returns an array of categories
-            const allData = await home.content().catch(() => []);
+            const [allData, news] = await Promise.all([
+                home.content().catch(() => []),
+                newsPromise
+            ]);
             
             let slider = [];
             const rowData = [];
 
             for (const section of allData) {
                 if (section.title === 'الأكثر مشاهدة' || section.title.includes('مشاهدة')) {
-                    // Extract Top Anime for the slider
                     slider = this.formatSlider(section.animeList);
                 } else {
                     rowData.push({
@@ -74,11 +81,12 @@ class DataStandardizer {
 
             return {
                 slider: slider,
-                rowData: rowData.filter(row => row.data && row.data.length > 0)
+                rowData: rowData.filter(row => row.data && row.data.length > 0),
+                news: news.newsList.slice(0, 4)
             };
         }
 
-        return { slider: [], rowData: [] };
+        return { slider: [], rowData: [], news: [] };
     }
 
     /**
@@ -371,7 +379,35 @@ class DataStandardizer {
                 })).filter(row => row.data && row.data.length > 0)
             };
         } catch (e) {
-            return { rowData: [] };
+        }
+    }
+
+    /**
+     * Fetches and standardizes fixed-source news lists (currently from site 1's provider).
+     */
+    async getNewsList() {
+        const gn = new GetNews();
+        try {
+            const data = await gn.contentList();
+            return {
+                newsList: data.newsList || [],
+                next: data.next || null
+            };
+        } catch (e) {
+            return { newsList: [], next: null };
+        }
+    }
+
+    /**
+     * Fetches and standardizes a single news article page.
+     */
+    async getNewsArticle(url) {
+        const gn = new GetNews();
+        try {
+            const data = await gn.contentPage(url);
+            return data;
+        } catch (e) {
+            return null;
         }
     }
 }

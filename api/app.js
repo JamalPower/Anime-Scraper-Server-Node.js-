@@ -205,6 +205,7 @@ app.get("/", async (req, res) => {
                     home_page: JSON.stringify({
                         slider: homeData.slider,
                         rowData: homeData.rowData,
+                        news: homeData.news,
                         currentServer: offset,
                         time: timeNow
                     })
@@ -213,6 +214,7 @@ app.get("/", async (req, res) => {
             res.render("index", { 
                 slider: homeData.slider || [], 
                 rowData: homeData.rowData || [], 
+                news: homeData.news || [], 
                 currentServer: offset, 
                 servers: server_list 
             });
@@ -232,6 +234,7 @@ app.get("/", async (req, res) => {
                         home_page: JSON.stringify({
                             slider: homeData.slider,
                             rowData: homeData.rowData,
+                            news: homeData.news,
                             currentServer: offset,
                             time: timeNow
                         })
@@ -240,6 +243,7 @@ app.get("/", async (req, res) => {
                 res.render("index", { 
                     slider: homeData.slider || [], 
                     rowData: homeData.rowData || [], 
+                    news: homeData.news || [], 
                     currentServer: offset, 
                     servers: server_list 
                 });
@@ -248,13 +252,14 @@ app.get("/", async (req, res) => {
                 res.render("index", { 
                     slider: data.slider, 
                     rowData: data.rowData, 
+                    news: data.news || [], 
                     currentServer: offset, 
                     servers: server_list 
                 });
             }
         }
     } catch (e) {
-        res.render("index", { slider: [], rowData: [], currentServer: offset, servers: server_list, error: "Failed to load Data ,check terminal" + e.message });
+        res.render("index", { slider: [], rowData: [], news: [], currentServer: offset, servers: server_list, error: "Failed to load Data ,check terminal" + e.message });
     }
 });
 
@@ -660,6 +665,74 @@ app.get("/search", async (req, res) => {
     } catch (e) { res.redirect("/"); }
 });
 
+app.get("/news", async (req, res) => {
+    const srv = req.query.server || '1';
+    const standardizer = new DataStandardizer();
+    try {
+        const server_name = `server_1`; // News is locked to source 1
+        await animeCachTable(server_name);
+        const CacheRow = await db(server_name).where({}).first();
+        const timeNow = Date.now();
+
+        if (!CacheRow || !CacheRow.news_list) {
+            const data = await standardizer.getNewsList();
+            if (data && data.newsList && data.newsList.length > 0) {
+                if (!CacheRow) {
+                    await db(server_name).insert({ news_list: JSON.stringify({ data, time: timeNow }) });
+                } else {
+                    await db(server_name).update({ news_list: JSON.stringify({ data, time: timeNow }) });
+                }
+            }
+            res.render("news", { title: "أخبار الأنمي", newsList: data.newsList || [], servers: server_list, currentServer: srv });
+        } else {
+            const parsed = typeof CacheRow.news_list === 'string' ? JSON.parse(CacheRow.news_list) : CacheRow.news_list;
+            const cachedTime = new Date(parsed.time).getTime();
+            if ((timeNow - cachedTime) >= 1000 * 60 * 60 * 24) { // 24h
+                const data = await standardizer.getNewsList();
+                if (data && data.newsList && data.newsList.length > 0) {
+                    await db(server_name).update({ news_list: JSON.stringify({ data, time: timeNow }) });
+                }
+                res.render("news", { title: "أخبار الأنمي", newsList: data.newsList || parsed.data.newsList, servers: server_list, currentServer: srv });
+            } else {
+                res.render("news", { title: "أخبار الأنمي", newsList: parsed.data.newsList, servers: server_list, currentServer: srv });
+            }
+        }
+    } catch (e) { res.redirect("/"); }
+});
+
+app.get("/news-article", async (req, res) => {
+    const url = req.query.url;
+    const srv = req.query.server || '1'; // Keeping srv for UI context only
+    if (!url) return res.redirect("/news");
+
+    const standardizer = new DataStandardizer();
+    try {
+        const server_name = `server_1`; // News is locked to server 1 source
+        await animeCachTable(server_name);
+        const CacheRow = await db(server_name).where({}).first();
+        const timeNow = Date.now();
+        const cacheKey = `article_${encodeURIComponent(url)}`;
+
+        let parsedDetails = CacheRow && CacheRow.news_details ? (typeof CacheRow.news_details === 'string' ? JSON.parse(CacheRow.news_details) : CacheRow.news_details) : {};
+        const articleCache = parsedDetails[cacheKey];
+
+        if (!articleCache || (timeNow - new Date(articleCache.time).getTime()) >= 1000 * 60 * 60 * 24) {
+            const article = await standardizer.getNewsArticle(url);
+            if (article) {
+                parsedDetails[cacheKey] = { data: article, time: timeNow };
+                if (!CacheRow) {
+                    await db(server_name).insert({ news_details: JSON.stringify(parsedDetails) });
+                } else {
+                    await db(server_name).update({ news_details: JSON.stringify(parsedDetails) });
+                }
+            }
+            res.render("news-article", { title: article ? article.title : "أخبار الأنمي", article, servers: server_list, currentServer: srv });
+        } else {
+            res.render("news-article", { title: articleCache.data.title, article: articleCache.data, servers: server_list, currentServer: srv });
+        }
+    } catch (e) { res.redirect("/news"); }
+});
+
 app.get("/about", (req, res) => {
     const srv = req.query.server || '1';
     res.render("about", { 
@@ -733,10 +806,20 @@ async function animeCachTable(server_name){
             table.json("season_anime");
             table.json("schedule");
             table.json("search");
+            table.json("news_list");
+            table.json("news_details");
             table.timestamp("time");
             table.timestamps(true, true);
-
         });    
+    } else {
+        // Add news columns if they don't exist
+        const hasNewsList = await db.schema.hasColumn(server_name, 'news_list');
+        if (!hasNewsList) {
+            await db.schema.alterTable(server_name, (table) => {
+                table.json("news_list");
+                table.json("news_details");
+            });
+        }
     }    
 }
 
