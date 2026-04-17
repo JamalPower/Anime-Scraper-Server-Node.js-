@@ -2,10 +2,8 @@ const axios = require("axios");
 
 const timeout = Number(process.env.SCRAPER_TIMEOUT_MS) || (process.env.VERCEL ? 20000 : 15000);
 
-/** Fallback for local / quick tests only. Prefer `SCRAPERAPI_KEY` on Vercel; rotate this key if it was ever committed or shared. */
-const SCRAPERAPI_KEY_FALLBACK = process.env.SCRAPER_API_KEY;
-
-const scraperApiKey = process.env.SCRAPERAPI_KEY || SCRAPERAPI_KEY_FALLBACK;
+const BYPASS_PROXY_BASE = process.env.BYPASS_PROXY_URL || "https://bypass-cloudflare-production.up.railway.app";
+const useBypassProxy = process.env.USE_BYPASS_PROXY !== "false"; // enabled by default
 const proxyUrl = process.env.SCRAPER_PROXY || process.env.HTTPS_PROXY || process.env.HTTP_PROXY;
 
 const headers = {
@@ -47,9 +45,8 @@ instance.interceptors.request.use((config) => {
     const targetUrl = absoluteTargetUrl(config);
     if (!targetUrl) return config;
 
-    if (scraperApiKey) {
-        const endpoint = new URL("https://api.scraperapi.com/");
-        endpoint.searchParams.set("api_key", scraperApiKey);
+    if (useBypassProxy && BYPASS_PROXY_BASE) {
+        const endpoint = new URL(BYPASS_PROXY_BASE);
         endpoint.searchParams.set("url", targetUrl);
         config.url = endpoint.toString();
         return config;
