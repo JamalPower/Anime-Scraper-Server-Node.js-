@@ -740,10 +740,10 @@ app.get("/about", (req, res) => {
         servers: server_list 
     });
 });
-app.get("/test", async (req, res) => {
+app.get("/fetch-web", async (req, res) => {
     const url = encodeURIComponent(req.query.url);
     if (!url) return res.send('url is not provided');
-    await fetch(`https://api.scraperapi.com/?api_key=${process.env.SCRAPER_API_KEY}&url=${url}`)
+    await fetch(`https://bypass-cloudflare-production.up.railway.app/?url=${url}`)
     .then((response) => response.text())
     .then((data) => {
         res.send(data);
